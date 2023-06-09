@@ -1,6 +1,6 @@
 package com.kvbadev.wms.controllers;
 
-import com.kvbadev.wms.models.Product;
+import com.kvbadev.wms.models.warehouse.Product;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

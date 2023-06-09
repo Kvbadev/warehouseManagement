@@ -1,25 +1,37 @@
 package com.kvbadev.wms.models.warehouse;
 
+import javax.persistence.*;
 import java.util.List;
 
-public class StorageRack implements StorageUnit {
-    private Float width;
-    private Float height;
-    private Float depth;
+@Table(name = "storage_racks")
+@Entity
+@AttributeOverride(name="id", column = @Column(name="storage_rack_id"))
+public class StorageRack extends StorageUnit {
+    @OneToMany(mappedBy = "storageRack")
     private List<StorageShelf> shelves;
+    @OneToMany(mappedBy = "destination")
+    private List<RackRoute> routes;
 
-    @Override
-    public Float getWidth() {
-        return null;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "warehouse_id")
+    private Warehouse warehouse;
+
+    public void addRoute(StorageRack destination, double weight) {
+        var route = new RackRoute(this, destination, weight);
+        routes.add(route);
     }
 
-    @Override
-    public Float getDepth() {
-        return null;
+    public void removeRoute(StorageRack destination) {
+        var route = findRoute(destination);
+        if(route != null) {
+            route.setSource(null);
+            route.setDestination(null);
+            routes.remove(route);
+        }
     }
 
-    @Override
-    public Float getHeight() {
-        return null;
+    public RackRoute findRoute(StorageRack destination) {
+        return this.routes.stream().filter(r -> r.getDestination() == destination).findFirst().orElse(null);
     }
+
 }
