@@ -1,6 +1,7 @@
 package com.kvbadev.wms.models.warehouse;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "storage_racks")
@@ -8,9 +9,9 @@ import java.util.List;
 @AttributeOverride(name="id", column = @Column(name="storage_rack_id"))
 public class StorageRack extends StorageUnit {
     @OneToMany(mappedBy = "storageRack")
-    private List<StorageShelf> shelves;
+    private final List<StorageShelf> shelves = new ArrayList<>();
     @OneToMany(mappedBy = "destination")
-    private List<RackRoute> routes;
+    private final List<RackRoute> routes = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "warehouse_id")
@@ -34,4 +35,19 @@ public class StorageRack extends StorageUnit {
         return this.routes.stream().filter(r -> r.getDestination() == destination).findFirst().orElse(null);
     }
 
+    public void setWarehouse(Warehouse warehouse) {
+        this.warehouse = warehouse;
+    }
+
+    public Warehouse getWarehouse() {
+        return warehouse;
+    }
+
+    public List<StorageShelf> getShelves() {
+        return shelves;
+    }
+
+    public List<RackRoute> getRoutes() {
+        return routes;
+    }
 }
