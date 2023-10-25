@@ -1,0 +1,19 @@
+package com.kvbadev.wms;
+
+import com.kvbadev.wms.models.Item;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import java.math.BigDecimal;
+import java.util.Objects;
+
+@SpringBootTest
+public class ItemTests {
+
+    @Test
+    public void checkIf_itemNetPrice_is_convertedCorrectly() {
+        Item item = new Item("name", "description", 33125);
+        System.out.println(item.getNormalizedNetPrice());
+        assert Objects.equals(item.getNormalizedNetPrice(), new BigDecimal("331.25"));
+    }
+}
