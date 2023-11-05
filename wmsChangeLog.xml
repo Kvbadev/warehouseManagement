@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="1" author="jakub_piasecki">
+        <createTable tableName="storage_rooms">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)"/>
+        </createTable>
+        <createTable tableName="racks">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)"/>
+            <column name="storage_room_id" type="int">
+                <constraints foreignKeyName="FK_StorageRooms_Racks" references="storage_rooms(id)"/>
+            </column>
+        </createTable>
+        <createTable tableName="shelves">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)"/>
+            <column name="pos" type="int" remarks="Position in the rack"/>
+            <column name="working_load_limit" type="int"/>
+            <column name="rack_id" type="int">
+                <constraints foreignKeyName="FK_Racks_Shelves" references="racks(id)"/>
+            </column>
+        </createTable>
+        <createTable tableName="parcels">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)"/>
+            <column name="weight" type="int" remarks="weight in grams"/>
+            <column name="shelf_id" type="int">
+                <constraints foreignKeyName="FK_Shelves_Parcels" references="shelves(id)"/>
+            </column>
+        </createTable>
+        <createTable tableName="items">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)"/>
+            <column name="description" type="varchar(255)"/>
+            <column name="quantity" type="int"/>
+            <column name="net_price" type="bigint" remarks="The actual price is moved 2 points left"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="2" author="jakub_piasecki">
+        <addColumn tableName="items">
+            <column name="parcel_id" type="int">
+                <constraints foreignKeyName="FK_Parcels_Items" references="parcels(id)"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="jakub_piasecki" id="createHibernateSequence">
+        <createSequence
+                cycle="true"
+                dataType="int"
+                incrementBy="1"
+                maxValue="10000000"
+                minValue="1"
+                schemaName="public"
+                sequenceName="hibernate_sequence"
+                startValue="1"/>
+    </changeSet>
+    <changeSet id="seedDatabase" author="jakub_piasecki">
+        <loadData tableName="parcels" file="parcels.csv" />
+        <loadData tableName="items" file="items.csv" />
+    </changeSet>
+</databaseChangeLog>
