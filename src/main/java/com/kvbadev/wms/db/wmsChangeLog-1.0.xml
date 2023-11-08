@@ -58,7 +58,7 @@
             </column>
         </addColumn>
     </changeSet>
-    <changeSet author="jakub_piasecki" id="createHibernateSequence">
+    <changeSet id="3" author="jakub_piasecki">
         <createSequence
                 cycle="true"
                 dataType="int"
@@ -69,8 +69,8 @@
                 sequenceName="hibernate_sequence"
                 startValue="1"/>
     </changeSet>
-    <changeSet id="seedDatabase" author="jakub_piasecki">
-        <loadData tableName="parcels" file="parcels.csv" />
-        <loadData tableName="items" file="items.csv" />
+    <changeSet id="4" author="jakub_piasecki">
+        <loadData tableName="parcels" file="src/main/java/com/kvbadev/wms/db/parcels.csv" />
+        <loadData tableName="items" file="src/main/java/com/kvbadev/wms/db/items.csv" />
     </changeSet>
 </databaseChangeLog>

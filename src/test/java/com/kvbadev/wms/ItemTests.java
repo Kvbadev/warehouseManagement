@@ -2,12 +2,10 @@ package com.kvbadev.wms;
 
 import com.kvbadev.wms.models.Item;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
-@SpringBootTest
 public class ItemTests {
 
     @Test

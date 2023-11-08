@@ -5,12 +5,14 @@ import com.kvbadev.wms.data.ParcelRepository;
 import com.kvbadev.wms.models.Item;
 import com.kvbadev.wms.models.Parcel;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.ActiveProfiles;
 
-@ExtendWith(SpringExtension.class)
+//@ExtendWith(SpringExtension.class)
+//@DataJpaTest
+//@SpringBootTest
+@ActiveProfiles("test")
 @DataJpaTest
 public class ParcelRepositoryAndItemRepositoryIntegrationTests {
     @Autowired
@@ -30,8 +32,11 @@ public class ParcelRepositoryAndItemRepositoryIntegrationTests {
         parcel.addItem(p2);
         parcelRepository.save(parcel);
 
-        var itemsCount = itemRepository.count();
+        assert itemRepository.count() == 0;
 
-        assert itemsCount == 2;
+        itemRepository.save(p1);
+        itemRepository.save(p2);
+
+        assert itemRepository.count() == 2;
     }
 }

@@ -3,14 +3,13 @@ package com.kvbadev.wms;
 import com.kvbadev.wms.data.ItemRepository;
 import com.kvbadev.wms.models.Item;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Objects;
 
-@ExtendWith(SpringExtension.class)
+@ActiveProfiles("test")
 @DataJpaTest
 public class ItemRepositoryTests {
     @Autowired
