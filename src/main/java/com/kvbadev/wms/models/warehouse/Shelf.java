@@ -1,4 +1,6 @@
-package com.kvbadev.wms.models;
+package com.kvbadev.wms.models.warehouse;
+
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -7,8 +9,8 @@ import java.util.Objects;
 @Table(name = "shelves")
 public class Shelf implements Comparable<Shelf> {
     @Id
-    @GeneratedValue
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     private String name;
     private int pos;
     private int workingLoadLimit; //in grams
@@ -26,7 +28,7 @@ public class Shelf implements Comparable<Shelf> {
         this.workingLoadLimit = workingLoadLimit;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

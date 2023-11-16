@@ -50,6 +50,11 @@
             <column name="quantity" type="int"/>
             <column name="net_price" type="bigint" remarks="The actual price is moved 2 points left"/>
         </createTable>
+        <addAutoIncrement tableName="storage_rooms" columnName="id" />
+        <addAutoIncrement tableName="racks" columnName="id" />
+        <addAutoIncrement tableName="shelves" columnName="id" />
+        <addAutoIncrement tableName="parcels" columnName="id" />
+        <addAutoIncrement tableName="items" columnName="id" />
     </changeSet>
     <changeSet id="2" author="jakub_piasecki">
         <addColumn tableName="items">
@@ -59,18 +64,31 @@
         </addColumn>
     </changeSet>
     <changeSet id="3" author="jakub_piasecki">
-        <createSequence
-                cycle="true"
-                dataType="int"
-                incrementBy="1"
-                maxValue="10000000"
-                minValue="1"
-                schemaName="public"
-                sequenceName="hibernate_sequence"
-                startValue="1"/>
-    </changeSet>
-    <changeSet id="4" author="jakub_piasecki">
         <loadData tableName="parcels" file="src/main/java/com/kvbadev/wms/db/parcels.csv" />
         <loadData tableName="items" file="src/main/java/com/kvbadev/wms/db/items.csv" />
+    </changeSet>
+    <changeSet id="4" author="jakub_piasecki">
+        <createTable tableName="deliveries">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="arrival_date" type="date" />
+        </createTable>
+        <addAutoIncrement tableName="deliveries" columnName="id" />
+    </changeSet>
+    <changeSet id="5" author="jakub_piasecki">
+        <createTable tableName="delivery_items">
+            <column name="item_id" type="int"/>
+            <column name="delivery_id" type="int" />
+        </createTable>
+    </changeSet>
+    <changeSet id="6" author="jakub_piasecki">
+        <loadData tableName="items" file="src/main/java/com/kvbadev/wms/db/items.csv" />
+    </changeSet>
+    <changeSet id="7" author="jakub_piasecki">
+        <loadData tableName="deliveries" file="src/main/java/com/kvbadev/wms/db/deliveries.csv" />
+    </changeSet>
+    <changeSet id="8" author="jakub_piasecki">
+        <loadData tableName="delivery_items" file="src/main/java/com/kvbadev/wms/db/delivery_items.csv" />
     </changeSet>
 </databaseChangeLog>

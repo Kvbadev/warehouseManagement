@@ -1,4 +1,4 @@
-package com.kvbadev.wms.models;
+package com.kvbadev.wms.models.warehouse;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -7,8 +7,8 @@ import java.util.Objects;
 @Table(name = "racks")
 public class Rack {
     @Id
-    @GeneratedValue
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -20,10 +20,9 @@ public class Rack {
     }
     public Rack(String name) {
         this.name = name;
-//        this.shelves = new TreeSet<>();
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -31,17 +30,11 @@ public class Rack {
         return name;
     }
 
-//    public SortedSet<Shelf> getShelves() {
-//        return Collections.unmodifiableSortedSet(shelves);
-//    }
-
     public void addShelf(Shelf shelf) {
-//        shelves.add(shelf);
         shelf.setRack(this);
     }
 
     public void removeShelf(Shelf shelf) {
-//        shelves.remove(shelf);
         shelf.setRack(null);
     }
 
@@ -50,7 +43,7 @@ public class Rack {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Rack rack = (Rack) o;
-        return id == rack.id;
+        return Objects.equals(id, rack.id);
     }
 
     @Override

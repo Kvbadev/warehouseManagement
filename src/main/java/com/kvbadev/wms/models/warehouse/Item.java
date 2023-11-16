@@ -1,6 +1,7 @@
-package com.kvbadev.wms.models;
+package com.kvbadev.wms.models.warehouse;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -9,9 +10,9 @@ import java.util.Objects;
 @Entity
 @Table(name = "items")
 public class Item {
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    private int id;
+    private Integer id;
     private String name;
     private String description;
     private int quantity;
@@ -36,7 +37,7 @@ public class Item {
         this.quantity = quantity;
         this.netPrice = netPrice;
     }
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

@@ -1,7 +1,7 @@
 package com.kvbadev.wms.data;
 
-import com.kvbadev.wms.models.Rack;
-import com.kvbadev.wms.models.StorageRoom;
+import com.kvbadev.wms.models.warehouse.Rack;
+import com.kvbadev.wms.models.warehouse.StorageRoom;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

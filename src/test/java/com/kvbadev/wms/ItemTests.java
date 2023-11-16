@@ -1,6 +1,6 @@
 package com.kvbadev.wms;
 
-import com.kvbadev.wms.models.Item;
+import com.kvbadev.wms.models.warehouse.Item;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

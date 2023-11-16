@@ -2,8 +2,8 @@ package com.kvbadev.wms.services;
 
 import com.kvbadev.wms.data.ItemRepository;
 import com.kvbadev.wms.data.ParcelRepository;
-import com.kvbadev.wms.models.Item;
-import com.kvbadev.wms.models.Parcel;
+import com.kvbadev.wms.models.warehouse.Item;
+import com.kvbadev.wms.models.warehouse.Parcel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

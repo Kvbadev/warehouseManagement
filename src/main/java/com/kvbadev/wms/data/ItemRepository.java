@@ -1,6 +1,6 @@
 package com.kvbadev.wms.data;
 
-import com.kvbadev.wms.models.Item;
+import com.kvbadev.wms.models.warehouse.Item;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

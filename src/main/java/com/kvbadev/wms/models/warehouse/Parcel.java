@@ -1,4 +1,6 @@
-package com.kvbadev.wms.models;
+package com.kvbadev.wms.models.warehouse;
+
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -6,9 +8,9 @@ import java.util.Objects;
 @Entity
 @Table(name = "parcels")
 public class Parcel {
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    private int id;
+    private Integer id;
     private String name;
     private int weight; //weight in grams
 
@@ -24,7 +26,7 @@ public class Parcel {
         this.weight = weight;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

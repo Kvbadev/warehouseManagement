@@ -1,6 +1,6 @@
 package com.kvbadev.wms.data;
 
-import com.kvbadev.wms.models.Rack;
+import com.kvbadev.wms.models.warehouse.Rack;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

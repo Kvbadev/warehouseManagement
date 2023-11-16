@@ -1,7 +1,7 @@
 package com.kvbadev.wms.controllers;
 
-import com.kvbadev.wms.models.Item;
-import com.kvbadev.wms.models.Parcel;
+import com.kvbadev.wms.models.warehouse.Item;
+import com.kvbadev.wms.models.warehouse.Parcel;
 import com.kvbadev.wms.services.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -1,17 +1,16 @@
-package com.kvbadev.wms.models;
+package com.kvbadev.wms.models.warehouse;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "storage_rooms")
 public class StorageRoom {
     @Id
-    @GeneratedValue
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     private String name;
 
     public StorageRoom() {
@@ -19,7 +18,7 @@ public class StorageRoom {
     public StorageRoom(String name) {
         this.name = name;
     }
-    public int getId() {
+    public Integer getId() {
         return id;
     }
     public String getName() {
