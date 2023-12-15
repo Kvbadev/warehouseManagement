@@ -1,6 +1,6 @@
 package com.kvbadev.wms.controllers;
 
-import com.kvbadev.wms.data.DeliveryRepository;
+import com.kvbadev.wms.data.warehouse.DeliveryRepository;
 import com.kvbadev.wms.models.warehouse.Delivery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

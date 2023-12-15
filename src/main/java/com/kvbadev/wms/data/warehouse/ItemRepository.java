@@ -1,4 +1,4 @@
-package com.kvbadev.wms.data;
+package com.kvbadev.wms.data.warehouse;
 
 import com.kvbadev.wms.models.warehouse.Item;
 import org.springframework.data.jpa.repository.JpaRepository;

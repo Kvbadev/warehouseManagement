@@ -1,4 +1,4 @@
-package com.kvbadev.wms.data;
+package com.kvbadev.wms.data.warehouse;
 
 import com.kvbadev.wms.models.warehouse.Rack;
 import com.kvbadev.wms.models.warehouse.StorageRoom;

@@ -1,6 +1,6 @@
 package com.kvbadev.wms;
 
-import com.kvbadev.wms.data.ItemRepository;
+import com.kvbadev.wms.data.warehouse.ItemRepository;
 import com.kvbadev.wms.models.warehouse.Item;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

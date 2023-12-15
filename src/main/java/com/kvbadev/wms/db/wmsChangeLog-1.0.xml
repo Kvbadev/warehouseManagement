@@ -91,4 +91,59 @@
     <changeSet id="8" author="jakub_piasecki">
         <loadData tableName="delivery_items" file="src/main/java/com/kvbadev/wms/db/delivery_items.csv" />
     </changeSet>
+    <changeSet id="9" author="jakub_piasecki">
+        <createTable tableName="privileges">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="name" type="varchar(255)" />
+        </createTable>
+        <addAutoIncrement tableName="privileges" columnName="id" />
+    </changeSet>
+    <changeSet id="10" author="jakub_piasecki">
+        <createTable tableName="roles">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="name" type="varchar(255)" />
+        </createTable>
+        <addAutoIncrement tableName="roles" columnName="id" />
+    </changeSet>
+    <changeSet id="11" author="jakub_piasecki">
+        <createTable tableName="users">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="first_name" type="varchar(255)" />
+            <column name="last_name" type="varchar(255)" />
+            <column name="email" type="varchar(255)" />
+            <column name="password" type="varchar(60)" />
+            <column name="enabled" type="bool" />
+        </createTable>
+        <addAutoIncrement tableName="users" columnName="id" />
+    </changeSet>
+    <changeSet id="12" author="jakub_piasecki">
+        <comment>A many-to-many join table between roles and privileges</comment>
+        <createTable tableName="roles_privileges">
+            <column name="role_id" type="int">
+                <constraints nullable="false" foreignKeyName="FK_Role_Id" references="roles(id)" />
+            </column>
+            <column name="privilege_id" type="int">
+                <constraints nullable="false" foreignKeyName="FK_Privilege_Id" references="privileges(id)" />
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="roles_privileges" columnNames="role_id,privilege_id" />
+    </changeSet>
+    <changeSet id="13" author="jakub_piasecki">
+        <comment>A many-to-many join table between users and roles</comment>
+        <createTable tableName="users_roles">
+            <column name="user_id" type="int">
+                <constraints nullable="false" foreignKeyName="FK_User_Id" references="users(id)" />
+            </column>
+            <column name="role_id" type="int">
+                <constraints nullable="false" foreignKeyName="FK_Role_Id" references="roles(id)" />
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="users_roles" columnNames="user_id,role_id" />
+    </changeSet>
 </databaseChangeLog>
