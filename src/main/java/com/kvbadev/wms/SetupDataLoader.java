@@ -6,6 +6,8 @@ import com.kvbadev.wms.data.auth.UserRepository;
 import com.kvbadev.wms.models.auth.Privilege;
 import com.kvbadev.wms.models.auth.Role;
 import com.kvbadev.wms.models.auth.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -39,6 +41,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (alreadySetup) return;
 
+        Logger logger = LoggerFactory.getLogger(SetupDataLoader.class);
+
         Privilege readPrivilege = createPrivilegeIfNotFound("READ_PRIVILEGE");
         Privilege writePrivilege = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
 
@@ -46,12 +50,19 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
         createRoleIfNotFound("ROLE_USER", Arrays.asList(readPrivilege));
 
+        if(userRepository.count() > 0) {
+            alreadySetup = true;
+            return;
+        }
         Role adminRole = roleRepository.findByName("ROLE_ADMIN");
+        String passwd = passwordEncoder.encode("test");
+        logger.warn("password: "+passwd);
+
         User user = new User(
                 "Test",
                 "Test",
-                passwordEncoder.encode("test"),
                 "test@test.com",
+                passwd,
                 Arrays.asList(adminRole)
         );
         user.setEnabled(true);
