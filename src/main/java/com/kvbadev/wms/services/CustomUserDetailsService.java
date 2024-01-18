@@ -1,5 +1,6 @@
 package com.kvbadev.wms.services;
 
+import com.kvbadev.wms.data.auth.PrivilegeRepository;
 import com.kvbadev.wms.data.auth.RoleRepository;
 import com.kvbadev.wms.data.auth.UserRepository;
 import com.kvbadev.wms.models.auth.Privilege;
@@ -27,6 +28,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private PrivilegeRepository privilegeRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -36,7 +39,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(), user.getPassword(), user.isEnabled(), true, true, true,
-                getAuthorities(user.getRoles())
+                getAuthorities(roleRepository.findByUser(user.getEmail()))
         );
     }
 
@@ -49,7 +52,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         List<Privilege> collection = new ArrayList<>();
         for (Role role : roles) {
             privileges.add(role.getName());
-            collection.addAll(role.getPrivileges());
+            collection.addAll(privilegeRepository.findByRole(role.getName()));
         }
         for (Privilege item : collection) {
             privileges.add(item.getName());

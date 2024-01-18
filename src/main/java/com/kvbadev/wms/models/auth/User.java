@@ -1,7 +1,6 @@
 package com.kvbadev.wms.models.auth;
 
 import javax.persistence.*;
-import java.util.Collection;
 
 @Entity
 @Table(name = "users")
@@ -20,22 +19,12 @@ public class User {
     public User() {
     }
 
-    public User(String firstName, String lastName, String email, String password, Collection<Role> roles) {
+    public User(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.roles = roles;
     }
-
-    @ManyToMany
-    @JoinTable(
-            name = "users_roles",
-            joinColumns = @JoinColumn(
-                    name = "User_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(
-                    name = "role_id", referencedColumnName = "id"))
-    private Collection<Role> roles;
 
     public String getFirstName() {
         return firstName;
@@ -68,7 +57,4 @@ public class User {
         this.enabled = enabled;
     }
 
-    public Collection<Role> getRoles() {
-        return roles;
-    }
 }
