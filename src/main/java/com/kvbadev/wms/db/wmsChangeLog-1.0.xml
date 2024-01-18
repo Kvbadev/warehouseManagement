@@ -146,4 +146,19 @@
         </createTable>
         <addPrimaryKey tableName="users_roles" columnNames="user_id,role_id" />
     </changeSet>
+    <changeSet id="14" author="jakub_piasecki">
+        <loadData tableName="privileges" file="src/main/java/com/kvbadev/wms/db/privileges.csv" />
+    </changeSet>
+    <changeSet id="15" author="jakub_piasecki">
+        <loadData tableName="roles" file="src/main/java/com/kvbadev/wms/db/roles.csv" />
+    </changeSet>
+    <changeSet id="16" author="jakub_piasecki">
+        <loadData tableName="users" file="src/main/java/com/kvbadev/wms/db/users.csv" />
+    </changeSet>
+    <changeSet id="17" author="jakub_piasecki">
+        <loadData tableName="roles_privileges" file="src/main/java/com/kvbadev/wms/db/roles_privileges.csv" />
+    </changeSet>
+    <changeSet id="18" author="jakub_piasecki">
+        <loadData tableName="users_roles" file="src/main/java/com/kvbadev/wms/db/users_roles.csv" />
+    </changeSet>
 </databaseChangeLog>
