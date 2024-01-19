@@ -42,11 +42,17 @@ public class AppConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf()
                 .disable()
-                .httpBasic().and()
                 .authorizeRequests()
                     .expressionHandler(myWebSecurityExpressionHandler())
-                    .antMatchers(HttpMethod.GET, "/inventory/items")
-                    .hasRole("ADMIN");
+                    .antMatchers(HttpMethod.POST, "/users**")
+                    .hasRole("ADMIN")
+                    .antMatchers(HttpMethod.GET, "/users**")
+                    .hasRole("STAFF")
+                    .antMatchers("/inventory**", "/deliveries**")
+                    .hasRole("USER")
+                    .anyRequest().authenticated()
+                .and()
+                .httpBasic();
 
         return http.build();
     }

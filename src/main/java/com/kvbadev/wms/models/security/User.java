@@ -1,4 +1,4 @@
-package com.kvbadev.wms.models.auth;
+package com.kvbadev.wms.models.security;
 
 import javax.persistence.*;
 

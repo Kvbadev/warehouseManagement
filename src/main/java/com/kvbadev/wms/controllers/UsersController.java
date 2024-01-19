@@ -1,15 +1,13 @@
 package com.kvbadev.wms.controllers;
 
-import com.kvbadev.wms.controllers.dto.UserDto;
-import com.kvbadev.wms.data.auth.UserRepository;
-import com.kvbadev.wms.models.auth.User;
+import com.kvbadev.wms.data.security.UserRepository;
+import com.kvbadev.wms.models.security.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -18,12 +16,8 @@ public class UsersController {
     private UserRepository userRepository;
 
     @GetMapping
-    public List<UserDto> getUsers() {
-        List<User> userList = userRepository.findAll();
-        List<UserDto> list = userList.stream().map(u -> {
-            return new UserDto(u.getFirstName(),u.getLastName(),u.getEmail(), u.isEnabled());
-        }).collect(Collectors.toList());
-        return list;
+    public List<User> getUsers() {
+        return userRepository.findAll();
     }
 
     @GetMapping("byRole/{role}")

@@ -1,11 +1,11 @@
 package com.kvbadev.wms.services;
 
-import com.kvbadev.wms.data.auth.PrivilegeRepository;
-import com.kvbadev.wms.data.auth.RoleRepository;
-import com.kvbadev.wms.data.auth.UserRepository;
-import com.kvbadev.wms.models.auth.Privilege;
-import com.kvbadev.wms.models.auth.Role;
-import com.kvbadev.wms.models.auth.User;
+import com.kvbadev.wms.data.security.PrivilegeRepository;
+import com.kvbadev.wms.data.security.RoleRepository;
+import com.kvbadev.wms.data.security.UserRepository;
+import com.kvbadev.wms.models.security.Privilege;
+import com.kvbadev.wms.models.security.Role;
+import com.kvbadev.wms.models.security.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

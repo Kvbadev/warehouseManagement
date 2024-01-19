@@ -1,2 +1,4 @@
 first_name,last_name,email,password,enabled
-Admin,,nieconmateusz@gmail.com,$2y$10$9ThJtrGHCRnJCmH5cKw.j.e6Yb1PXOhQEYXnvpcRCMUngt/amAr5G,true
+Admin,adminLastname,nieconmateusz@gmail.com,$2a$10$1LVAKnQT1bWDyLoKSJdU.OszviE6w6HI3OeioFLnbbirqBsJZ69Jq,true
+Staff,staffLastname,staff@gmail.com,$2a$10$Y0Ft4yJrCNfSrQnaUvXNZeyeJqzhL5BKVJnmKVAV7vbssD8808tmm,true
+User,userLastname,user@gmail.com,$2a$10$lpkXlwvrjnhl9zIyvxikjeyl2rn366HrreBz94kc3VI69qnwP3WfS,true
