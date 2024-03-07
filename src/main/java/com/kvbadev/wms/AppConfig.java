@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -40,21 +41,19 @@ public class AppConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf()
-                .disable()
+        http.csrf(csrf -> csrf.disable())
                 .authorizeRequests()
                 .expressionHandler(myWebSecurityExpressionHandler())
-                .antMatchers(HttpMethod.POST, "/users**")
+                .requestMatchers(HttpMethod.POST, "/users**")
                 .hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET, "/users**")
+                .requestMatchers(HttpMethod.GET, "/users**")
                 .hasRole("STAFF")
-                .antMatchers("/inventory**", "/deliveries**")
+                .requestMatchers("/inventory**", "/deliveries**")
                 .hasRole("USER")
                 .anyRequest().authenticated()
                 .and()
-                .cors()
-                .and()
-                .httpBasic();
+                .cors(Customizer.withDefaults())
+                .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }

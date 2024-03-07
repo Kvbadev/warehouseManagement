@@ -1,6 +1,6 @@
 package com.kvbadev.wms.models.warehouse;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity

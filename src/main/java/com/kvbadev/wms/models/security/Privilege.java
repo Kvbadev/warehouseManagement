@@ -1,6 +1,6 @@
 package com.kvbadev.wms.models.security;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "privileges")

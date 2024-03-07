@@ -1,8 +1,7 @@
 package com.kvbadev.wms.models.warehouse;
 
-import org.hibernate.annotations.GenericGenerator;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
