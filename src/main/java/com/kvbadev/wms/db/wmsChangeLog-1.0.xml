@@ -161,4 +161,12 @@
     <changeSet id="18" author="jakub_piasecki" runOnChange="true">
         <loadData tableName="users_roles" file="src/main/java/com/kvbadev/wms/db/users_roles.csv" />
     </changeSet>
+    <changeSet id="19" author="jakub_piasecki">
+        <createTable tableName="gates">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
 </databaseChangeLog>
