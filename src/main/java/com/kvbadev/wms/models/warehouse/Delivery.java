@@ -1,8 +1,7 @@
 package com.kvbadev.wms.models.warehouse;
 
-import org.hibernate.annotations.GenericGenerator;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.sql.Date;
 
 //The delivery class. The relationship between the delivery and the items in it is saved in a join table - delivery_items

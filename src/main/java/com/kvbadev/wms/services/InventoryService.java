@@ -23,6 +23,9 @@ public class InventoryService {
     public Item findItemById(int id) {
         return itemRepository.findById(id).orElse(null);
     }
+    public void removeItem(Item item) {
+        itemRepository.delete(item);
+    }
 
     public List<Item> findAllParcelItems(int parcelId) {
         return itemRepository.findAllParcelItems(parcelId);

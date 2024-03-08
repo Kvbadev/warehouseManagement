@@ -5,15 +5,18 @@ import com.kvbadev.wms.data.warehouse.ParcelRepository;
 import com.kvbadev.wms.models.warehouse.Item;
 import com.kvbadev.wms.models.warehouse.Parcel;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 //@ExtendWith(SpringExtension.class)
 //@DataJpaTest
 //@SpringBootTest
 @ActiveProfiles("test")
 @DataJpaTest
+@ExtendWith(SpringExtension.class)
 public class ParcelRepositoryAndItemRepositoryIntegrationTests {
     @Autowired
     private ParcelRepository parcelRepository;

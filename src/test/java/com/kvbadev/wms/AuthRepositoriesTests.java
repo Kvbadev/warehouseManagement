@@ -5,17 +5,17 @@ import com.kvbadev.wms.data.security.RoleRepository;
 import com.kvbadev.wms.data.security.UserRepository;
 import com.kvbadev.wms.models.security.Role;
 import com.kvbadev.wms.models.security.User;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
 @ActiveProfiles("test")
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @DataJpaTest
 public class AuthRepositoriesTests {
     @Autowired
