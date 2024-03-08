@@ -2,10 +2,14 @@ package com.kvbadev.wms;
 
 import com.kvbadev.wms.models.warehouse.Item;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
+
+@ExtendWith(SpringExtension.class)
 public class ItemTests {
 
     @Test

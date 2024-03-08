@@ -26,7 +26,7 @@ public class DeliveryController {
     }
 
     @GetMapping("/item/{itemId}")
-    public List<Delivery> getDeliveryByItem(@PathVariable int itemId) {
+    public List<Delivery> getDeliveryByItem(@PathVariable("itemId") int itemId) {
         return deliveryRepository.findDeliveriesByItemId(itemId);
     }
 
