@@ -4,6 +4,7 @@ import com.kvbadev.wms.data.warehouse.DeliveryRepository;
 import com.kvbadev.wms.models.warehouse.Delivery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,13 +17,13 @@ public class DeliveryController {
     DeliveryRepository deliveryRepository;
 
     @GetMapping
-    public List<Delivery> getDeliveries() {
-        return deliveryRepository.findAll();
+    public ResponseEntity<List<Delivery>> getDeliveries() {
+        return ResponseEntity.ok(deliveryRepository.findAll());
     }
 
     @GetMapping("/latest")
-    public List<Delivery> getLatestDeliveries() {
-        return deliveryRepository.findLatestDeliveries();
+    public ResponseEntity<List<Delivery>> getLatestDeliveries() {
+        return ResponseEntity.ok(deliveryRepository.findLatestDeliveries());
     }
 
     @GetMapping("/item/{itemId}")

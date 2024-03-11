@@ -27,17 +27,28 @@ public class InventoryService {
         itemRepository.delete(item);
     }
 
+    /**
+     * Gets all the items contained in a parcel with provided id
+     * @param parcelId an id of the desired parcel
+     * @return items included in the parcel with the provided id
+     */
     public List<Item> findAllParcelItems(int parcelId) {
         return itemRepository.findAllParcelItems(parcelId);
     }
 
-    public Parcel findParentalParcel(int itemId) {
+    /**
+     * Gets the item's parental parcel using the provided id
+     * @param itemId an id of the desired item
+     * @return a parcel in which the item is contained
+     * @see Parcel
+     */
+    public Parcel findParentParcel(int itemId) {
         return parcelRepository.findByItemId(itemId).orElse(null);
     }
 
-    public void saveItem(Item item) {
+    public Item saveItem(Item item) {
         //validate item first!
-        itemRepository.save(item);
+        return itemRepository.save(item);
     }
 
     public List<Parcel> findAllParcels() {
@@ -48,8 +59,8 @@ public class InventoryService {
         return parcelRepository.findById(id).orElse(null);
     }
 
-    public void saveParcel(Parcel parcel) {
+    public Parcel saveParcel(Parcel parcel) {
         //validate the parcel
-        parcelRepository.save(parcel);
+        return parcelRepository.save(parcel);
     }
 }

@@ -14,30 +14,28 @@ import java.util.List;
 @RestController
 @RequestMapping("/inventory")
 public class InventoryController {
-
     private final InventoryService inventoryService;
-
     public InventoryController(@Autowired InventoryService inventoryService){
         this.inventoryService = inventoryService;
     }
 
     // ITEMS //
     @GetMapping("/items")
-    public List<Item> getItems() {
-        return inventoryService.findAllItems();
+    public ResponseEntity<List<Item>> getItems() {
+        return ResponseEntity.ok(inventoryService.findAllItems());
     }
 
     @GetMapping("/items/{Id}")
-    public Item getItem(@PathVariable("Id") int Id, HttpServletResponse response) {
+    public ResponseEntity<Item> getItem(@PathVariable("Id") int Id, HttpServletResponse response) {
         var res = inventoryService.findItemById(Id);
-        if(res == null) response.setStatus(HttpStatus.NO_CONTENT.value());
-        return res;
+        if(res == null) ResponseEntity.notFound().build();
+        return ResponseEntity.ok(res);
     }
 
     @PostMapping("/items")
-    @ResponseStatus(HttpStatus.OK)
-    public void createItem(@RequestBody Item item) {
-        inventoryService.saveItem(item);
+    public ResponseEntity<Item> createItem(@RequestBody Item item) {
+        item = inventoryService.saveItem(item);
+        return ResponseEntity.ok(item);
     }
 
     @DeleteMapping("/items/{Id}")
@@ -52,35 +50,37 @@ public class InventoryController {
     }
 
     @GetMapping("/items/{Id}/parcel")
-    public Parcel getParcelPossessingItem(@PathVariable("Id") int Id, HttpServletResponse response) {
-        var p = inventoryService.findParentalParcel(Id);
-        if(p == null) response.setStatus(HttpStatus.NO_CONTENT.value());
-        return p;
+    public ResponseEntity<Parcel> getParentParcel(@PathVariable("Id") int Id) {
+        var parcel = inventoryService.findParentParcel(Id);
+        if(parcel == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(parcel);
     }
 
     // PARCELS //
 
     @GetMapping("/parcels")
-    public List<Parcel> getParcels() {
-        return inventoryService.findAllParcels();
+    public ResponseEntity<List<Parcel>> getParcels() {
+        return ResponseEntity.ok(inventoryService.findAllParcels());
     }
 
     @GetMapping("/parcels/{Id}")
-    public Parcel getParcel(@PathVariable("Id") int Id, HttpServletResponse response) {
+    public ResponseEntity<Parcel> getParcel(@PathVariable("Id") int Id) {
         var res = inventoryService.findParcelById(Id);
-        if(res == null) response.setStatus(HttpStatus.NO_CONTENT.value());
-        return res;
+        if(res == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(res);
     }
 
     @PostMapping("/parcels")
-    @ResponseStatus(HttpStatus.OK)
-    public void createItem(@RequestBody Parcel parcel) {
-        inventoryService.saveParcel(parcel);
+    public ResponseEntity<Parcel> createParcel(@RequestBody Parcel parcel) {
+        parcel = inventoryService.saveParcel(parcel);
+        return new ResponseEntity<>(parcel, HttpStatus.CREATED);
     }
 
     @GetMapping("/parcels/{Id}/items")
-    public List<Item> getParcelItems(@PathVariable("Id") int Id) {
-        return inventoryService.findAllParcelItems(Id);
+    public ResponseEntity<List<Item>> getParcelItems(@PathVariable("Id") int Id) {
+        return ResponseEntity.ok(inventoryService.findAllParcelItems(Id));
     }
 
 }
