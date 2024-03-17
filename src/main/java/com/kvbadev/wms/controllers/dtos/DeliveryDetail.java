@@ -1,33 +1,34 @@
-package com.kvbadev.wms.models.warehouse;
+package com.kvbadev.wms.controllers.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.sql.Date;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.TimeZone;
 
-//The delivery class. The relationship between the delivery and the items in it is saved in a join table - delivery_items
-@Entity
-@Table(name = "deliveries")
-public class Delivery {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class DeliveryDetail {
     private Integer id;
 
-    @Column(name = "arrival_date")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date arrivalDate;
 
-    public Delivery() {
+    public DeliveryDetail(Integer id, Date arrivalDate) {
+        this.id = id;
+        this.arrivalDate = arrivalDate;
     }
 
-    public Delivery(Date arrivalDate) {
+    public DeliveryDetail(Date arrivalDate) {
         this.arrivalDate = arrivalDate;
     }
 
     public Integer getId() {
         return id;
     }
-    public void setId(int id) {
+
+    public void setId(Integer id) {
         this.id = id;
     }
 
