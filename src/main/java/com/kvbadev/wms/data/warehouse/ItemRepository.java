@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Integer> {
     @Query(value = "SELECT * FROM items i WHERE i.parcel_id = :id", nativeQuery = true)
-    List<Item> findAllParcelItems(@Param("id")int parcelId);
+    List<Item> findItemsByParcelId(@Param("id")int parcelId);
 }
