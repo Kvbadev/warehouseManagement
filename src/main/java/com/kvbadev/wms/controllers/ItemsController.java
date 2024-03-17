@@ -1,17 +1,19 @@
 package com.kvbadev.wms.controllers;
 
 import com.kvbadev.wms.data.warehouse.ItemRepository;
+import com.kvbadev.wms.models.exceptions.EmptyRequestParamException;
 import com.kvbadev.wms.models.exceptions.EntityNotFoundException;
-import com.kvbadev.wms.models.exceptions.ItemNotFoundException;
 import com.kvbadev.wms.models.warehouse.Item;
 import com.kvbadev.wms.models.warehouse.ItemModelAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,29 +41,34 @@ public class ItemsController {
     @GetMapping("{Id}")
     public EntityModel<Item> getItem(@PathVariable("Id") int Id) {
         Optional<Item> res = itemRepository.findById(Id);
-        return res.map(itemModelAssembler::toModel).orElseThrow(() -> new ItemNotFoundException(Id));
+        return res.map(itemModelAssembler::toModel).orElseThrow(() -> new EntityNotFoundException(Item.class, Id));
     }
 
     @PostMapping
-    public ResponseEntity<Item> createItem(@RequestBody Item item) {
+    public EntityModel<Item> createItem(@RequestBody Item item) {
         item = itemRepository.save(item);
-        return ResponseEntity.ok(item);
+        return itemModelAssembler.toModel(item);
     }
 
     @DeleteMapping("{Id}")
-    public ResponseEntity<Void> deleteItem(@PathVariable("Id") int Id) {
-        Optional<Item> item = itemRepository.findById(Id);
-        if (item.isPresent()) {
-            itemRepository.deleteById(item.get().getId());
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<?> deleteItem(@PathVariable("Id") int Id) {
+        try {
+            itemRepository.deleteById(Id);
+            return ResponseEntity.noContent().build();
+
+        } catch (EmptyResultDataAccessException e) {
+            throw new EntityNotFoundException(Item.class, Id);
         }
     }
 
-    @GetMapping("parcelId")
-    public ResponseEntity<List<Item>> getParcelItems(@PathVariable("parcelId") int parcelId) {
-        return ResponseEntity.ok(itemRepository.findItemsByParcelId(parcelId));
+    @RequestMapping(params = "parcelId", method = RequestMethod.GET)
+    public CollectionModel<EntityModel<Item>> getParcelItems(@RequestParam("parcelId") Optional<Integer> parcelId) {
+        List<EntityModel<Item>> items = parcelId.map(pId ->
+                        itemRepository.findItemsByParcelId(pId).stream()
+                                .map(itemModelAssembler::toModel).toList()
+                )
+                .orElseThrow(() -> new EmptyRequestParamException("parcelId"));
+        return CollectionModel.of(items, linkTo(methodOn(ItemsController.class).getParcelItems(parcelId)).withSelfRel());
     }
 
 }
