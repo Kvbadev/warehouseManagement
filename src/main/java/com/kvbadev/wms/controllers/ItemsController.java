@@ -31,23 +31,29 @@ public class ItemsController {
     private ItemModelAssembler itemModelAssembler;
 
     @GetMapping
-    public CollectionModel<EntityModel<Item>> getItems() {
+    public ResponseEntity<CollectionModel<EntityModel<Item>>> getItems() {
         List<EntityModel<Item>> items = itemRepository.findAll().stream()
                 .map(item -> itemModelAssembler.toModel(item)).collect(Collectors.toList());
 
-        return CollectionModel.of(items, linkTo(methodOn(ItemsController.class).getItems()).withSelfRel());
+        return ResponseEntity.ok(
+                CollectionModel.of(items, linkTo(methodOn(ItemsController.class).getItems()).withSelfRel())
+        );
     }
 
     @GetMapping("{Id}")
-    public EntityModel<Item> getItem(@PathVariable("Id") int Id) {
+    public ResponseEntity<EntityModel<Item>> getItem(@PathVariable("Id") int Id) {
         Optional<Item> res = itemRepository.findById(Id);
-        return res.map(itemModelAssembler::toModel).orElseThrow(() -> new EntityNotFoundException(Item.class, Id));
+        return ResponseEntity.ok(
+                res.map(itemModelAssembler::toModel).orElseThrow(() -> new EntityNotFoundException(Item.class, Id))
+        );
     }
 
     @PostMapping
-    public EntityModel<Item> createItem(@RequestBody Item item) {
+    public ResponseEntity<EntityModel<Item>> createItem(@RequestBody Item item) {
         item = itemRepository.save(item);
-        return itemModelAssembler.toModel(item);
+        return ResponseEntity.ok(
+                itemModelAssembler.toModel(item)
+        );
     }
 
     @DeleteMapping("{Id}")
@@ -62,13 +68,17 @@ public class ItemsController {
     }
 
     @RequestMapping(params = "parcelId", method = RequestMethod.GET)
-    public CollectionModel<EntityModel<Item>> getParcelItems(@RequestParam("parcelId") Optional<Integer> parcelId) {
+    public ResponseEntity<CollectionModel<EntityModel<Item>>> getParcelItems(@RequestParam("parcelId") Optional<Integer> parcelId) {
         List<EntityModel<Item>> items = parcelId.map(pId ->
-                        itemRepository.findItemsByParcelId(pId).stream()
+                        itemRepository
+                                .findItemsByParcelId(pId).stream()
                                 .map(itemModelAssembler::toModel).toList()
                 )
                 .orElseThrow(() -> new EmptyRequestParamException("parcelId"));
-        return CollectionModel.of(items, linkTo(methodOn(ItemsController.class).getParcelItems(parcelId)).withSelfRel());
+
+        return ResponseEntity.ok(
+                CollectionModel.of(items, linkTo(methodOn(ItemsController.class).getParcelItems(parcelId)).withSelfRel())
+        );
     }
 
 }
