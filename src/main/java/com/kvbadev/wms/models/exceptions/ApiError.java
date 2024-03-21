@@ -1,10 +1,16 @@
-package com.kvbadev.wms.controllers;
+package com.kvbadev.wms.models.exceptions;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.ConstraintViolation;
+import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class ApiError {
     private HttpStatus status;
@@ -28,6 +34,12 @@ public class ApiError {
         this.status = status;
         this.message = "Unexpected error";
         this.debugMessage = ex.getLocalizedMessage();
+    }
+
+    public ApiError(HttpStatus status, String message) {
+        this();
+        this.status = status;
+        this.message = message;
     }
 
     public ApiError(HttpStatus status, String message, Throwable ex) {
@@ -75,5 +87,29 @@ public class ApiError {
 
     public void setSubErrors(List<ApiSubError> subErrors) {
         this.subErrors = subErrors;
+    }
+
+    private void addSubError(ApiSubError subError) {
+        if (subErrors == null) {
+            subErrors = new ArrayList<>();
+        }
+        subErrors.add(subError);
+    }
+
+    private void appendValidationError(String object, String field, String rejectedValue, String message) {
+        addSubError(new ApiValidationError(object, field, rejectedValue, message));
+    }
+
+    private void addValidationError(ConstraintViolation<?> cv) {
+        String invalidValue = cv.getInvalidValue() != null ? cv.getInvalidValue().toString() : null;
+        this.appendValidationError(
+                cv.getRootBeanClass().getSimpleName(),
+                ((PathImpl) cv.getPropertyPath()).getLeafNode().asString(),
+                invalidValue,
+                cv.getMessage());
+    }
+
+    public void addValidationErrors(Set<ConstraintViolation<?>> constraintViolations) {
+        constraintViolations.forEach(this::addValidationError);
     }
 }

@@ -1,12 +1,14 @@
 package com.kvbadev.wms;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kvbadev.wms.services.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -25,6 +27,14 @@ public class AppConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public MappingJackson2HttpMessageConverter messageMappingConverter() {
+        final var om = new ObjectMapper();
+        om.setSerializationInclusion(JsonInclude.Include.ALWAYS);
+        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+        return new MappingJackson2HttpMessageConverter(om);
     }
 
     @Bean
@@ -72,11 +82,6 @@ public class AppConfig {
         provider.setUserDetailsService(userDetailsService());
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
-    }
-
-    @Bean
-    public ObjectMapper jsonObjectMapper() {
-        return new ObjectMapper();
     }
 
 }

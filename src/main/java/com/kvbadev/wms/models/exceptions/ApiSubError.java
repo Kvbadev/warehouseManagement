@@ -1,4 +1,4 @@
-package com.kvbadev.wms.controllers;
+package com.kvbadev.wms.models.exceptions;
 
 abstract class ApiSubError {
 

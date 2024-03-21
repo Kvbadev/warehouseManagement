@@ -26,8 +26,8 @@ public class ParcelRepositoryAndItemRepositoryIntegrationTests {
 
     @Test
     public void saveParcelWithItems_thenCheck_ifItemsAreSaved() {
-        Item p1 = new Item("Test1", "", 4450);
-        Item p2 = new Item("Test2", "", 3381);
+        Item p1 = new Item("Test1", "", 4450L);
+        Item p2 = new Item("Test2", "", 3381L);
 
         Parcel parcel = new Parcel("name", 3000);
 

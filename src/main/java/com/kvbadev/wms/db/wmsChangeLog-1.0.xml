@@ -169,4 +169,76 @@
             <column name="name" type="varchar(255)"/>
         </createTable>
     </changeSet>
+    <changeSet id="20" author="jakub_piasecki">
+        <dropTable tableName="delivery_items"/>
+    </changeSet>
+    <changeSet id="21" author="jakub_piasecki">
+        <addColumn tableName="items">
+            <column name="delivery_id" type="int" >
+                <constraints foreignKeyName="FK_Deliveries_Items" references="deliveries(id)"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="22" author="jakubpiasecki">
+        <dropColumn tableName="items">
+            <column name="delivery_id"/>
+        </dropColumn>
+    </changeSet>
+    <changeSet id="23" author="jakub_piasecki">
+        <addColumn tableName="parcels">
+            <column name="delivery_id" type="int" >
+                <constraints foreignKeyName="FK_Deliveries_Parcels" references="deliveries(id)"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="24" author="jakub_piasecki">
+        <modifyDataType tableName="items" columnName="name" newDataType="varchar(50)" />
+        <addNotNullConstraint tableName="items" columnName="name" />
+    </changeSet>
+    <changeSet id="25" author="jakub_piasecki">
+        <addNotNullConstraint tableName="items" columnName="quantity" />
+    </changeSet>
+    <changeSet id="26" author="jakub_piasecki">
+        <addNotNullConstraint tableName="items" columnName="net_price" />
+    </changeSet>
+    <changeSet id="27" author="jakub_piasecki">
+        <modifyDataType tableName="parcels" columnName="name" newDataType="varchar(50)" />
+        <addNotNullConstraint tableName="parcels" columnName="name" />
+    </changeSet>
+    <changeSet id="28" author="jakub_piasecki">
+        <addNotNullConstraint tableName="parcels" columnName="weight" />
+    </changeSet>
+    <changeSet id="29" author="jakub_piasecki">
+        <addNotNullConstraint tableName="deliveries" columnName="arrival_date" />
+    </changeSet>
+    <changeSet id="30" author="jakub_piasecki">
+        <addNotNullConstraint tableName="items" columnName="id" />
+    </changeSet>
+    <changeSet id="31" author="jakub_piasecki">
+        <addNotNullConstraint tableName="parcels" columnName="id" />
+    </changeSet>
+    <changeSet id="32" author="jakub_piasecki">
+        <addNotNullConstraint tableName="deliveries" columnName="id" />
+    </changeSet>
+    <changeSet id="33" author="jakub_piasecki">
+        <addNotNullConstraint tableName="shelves" columnName="id" />
+    </changeSet>
+    <changeSet id="34" author="jakub_piasecki">
+        <addNotNullConstraint tableName="racks" columnName="id" />
+    </changeSet>
+    <changeSet id="35" author="jakub_piasecki">
+        <addNotNullConstraint tableName="storage_rooms" columnName="id" />
+    </changeSet>
+    <changeSet id="36" author="jakub_piasecki">
+        <modifyDataType tableName="shelves" columnName="name" newDataType="varchar(50)" />
+        <addNotNullConstraint tableName="shelves" columnName="name" />
+    </changeSet>
+    <changeSet id="37" author="jakub_piasecki">
+        <modifyDataType tableName="racks" columnName="name" newDataType="varchar(50)" />
+        <addNotNullConstraint tableName="racks" columnName="name" />
+    </changeSet>
+    <changeSet id="38" author="jakub_piasecki">
+        <modifyDataType tableName="storage_rooms" columnName="name" newDataType="varchar(50)" />
+        <addNotNullConstraint tableName="storage_rooms" columnName="name" />
+    </changeSet>
 </databaseChangeLog>

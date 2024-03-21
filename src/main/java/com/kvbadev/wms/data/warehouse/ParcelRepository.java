@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface ParcelRepository extends JpaRepository<Parcel, Integer> {
-    @Query(value = "SELECT p.* FROM items AS i JOIN parcels AS p ON i.parcel_id = p.id WHERE i.id = :id", nativeQuery = true)
-    Optional<Parcel> findByItemId(@Param("id") int itemId);
+    @Query(value = "SELECT p.* FROM items i JOIN parcels p ON i.parcel_id = p.id WHERE i.id = :itemId", nativeQuery = true)
+    Optional<Parcel> findByItemId(@Param("itemId") int itemId);
 
 }

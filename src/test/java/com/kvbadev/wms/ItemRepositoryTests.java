@@ -23,11 +23,10 @@ public class ItemRepositoryTests {
     @Autowired
     private ItemRepository itemRepository;
 
-    Item testItem = new Item("Test1", "test2", 4450);
+    Item testItem = new Item("Test1", "test2", 4450L);
 
     @Test
     @DisplayName("Check if an item is accessible and have correct data after adding to the itemRepository")
-    @Order(1)
     public void saveAndExamineItem() {
         itemRepository.save(testItem);
         var res = itemRepository.findAll();
@@ -35,15 +34,14 @@ public class ItemRepositoryTests {
         assert res.size() > 0;
         assert res.get(0) != null;
         assert Objects.equals(res.get(0).getNormalizedNetPrice(), testItem.getNormalizedNetPrice());
+
+        itemRepository.deleteAll();
     }
 
     @Test
     @DisplayName("Check if an item is being removed from the itemRepository")
-    @Order(2)
     public void removeItem() {
         //clear the repository
-        itemRepository.deleteAll();
-
         itemRepository.save(testItem);
         var product = itemRepository.findAll();
 

@@ -2,10 +2,10 @@ package com.kvbadev.wms.models.warehouse;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.sql.Date;
 
-//The delivery class. The relationship between the delivery and the items in it is saved in a join table - delivery_items
 @Entity
 @Table(name = "deliveries")
 public class Delivery {
@@ -15,6 +15,7 @@ public class Delivery {
 
     @Column(name = "arrival_date")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @NotNull
     private Date arrivalDate;
 
     public Delivery() {

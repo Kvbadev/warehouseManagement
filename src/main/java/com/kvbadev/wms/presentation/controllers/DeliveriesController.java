@@ -1,15 +1,15 @@
-package com.kvbadev.wms.controllers;
+package com.kvbadev.wms.presentation.controllers;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kvbadev.wms.controllers.dtos.DeliveryDetail;
+import com.kvbadev.wms.presentation.dataTransferObjects.DeliveryDto;
 import com.kvbadev.wms.data.warehouse.DeliveryRepository;
 import com.kvbadev.wms.models.warehouse.Delivery;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.kvbadev.wms.models.exceptions.EntityNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,14 +29,22 @@ public class DeliveriesController {
         return ResponseEntity.ok(deliveryRepository.findAll());
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<Delivery> getDelivery(@PathVariable("id") int id) {
+        return ResponseEntity.ok(
+                deliveryRepository.findById(id)
+                        .orElseThrow(() -> new EntityNotFoundException(Delivery.class, id))
+        );
+    }
+
     @GetMapping("/latest")
     public ResponseEntity<List<Delivery>> getLatestDeliveries() {
         return ResponseEntity.ok(deliveryRepository.findLatestDeliveries());
     }
 
     @GetMapping("/item/{itemId}")
-    public ResponseEntity<List<Delivery>> getDeliveryByItem(@PathVariable("itemId") int itemId) {
-        return ResponseEntity.ok(deliveryRepository.findDeliveriesByItemId(itemId));
+    public ResponseEntity<Delivery> getDeliveryByItemId(@PathVariable("itemId") int itemId) {
+        return ResponseEntity.ok(deliveryRepository.findByItemId(itemId));
     }
 
     @PostMapping
@@ -46,7 +54,7 @@ public class DeliveriesController {
     }
 
     @PutMapping("{Id}")
-    public ResponseEntity<Delivery> updateDelivery(@PathVariable int Id, @RequestBody Delivery delivery) {
+    public ResponseEntity<Delivery> updateDelivery(@PathVariable("id") int Id, @RequestBody Delivery delivery) {
         Optional<Delivery> existingDelivery = deliveryRepository.findById(Id);
         HttpStatus status = existingDelivery.isPresent() ? HttpStatus.OK : HttpStatus.CREATED;
 
@@ -54,18 +62,12 @@ public class DeliveriesController {
         return new ResponseEntity<>(delivery, status);
     }
 
-    @PatchMapping("{Id}")
-    public ResponseEntity<Delivery> patchDelivery(@PathVariable int Id, @RequestBody DeliveryDetail updateDeliveryRequest) {
-        try {
-            Delivery delivery = deliveryRepository.findById(Id).orElseThrow(EntityNotFoundException::new);
+    @PatchMapping("{id}")
+    public ResponseEntity<Delivery> patchDelivery(@PathVariable("id") int id, @RequestBody DeliveryDto updateDeliveryRequest) throws JsonMappingException {
+            Delivery delivery = deliveryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(Delivery.class, id));
             objectMapper.updateValue(delivery, updateDeliveryRequest);
-            //The entity is persisted on change, no need to call save()
-
+            deliveryRepository.save(delivery);
             return ResponseEntity.ok(delivery);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (JsonMappingException e) {
-            return ResponseEntity.internalServerError().build();
-        }
+
     }
 }

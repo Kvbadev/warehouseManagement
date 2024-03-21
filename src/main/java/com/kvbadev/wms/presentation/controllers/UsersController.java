@@ -1,4 +1,4 @@
-package com.kvbadev.wms.controllers;
+package com.kvbadev.wms.presentation.controllers;
 
 import com.kvbadev.wms.data.security.UserRepository;
 import com.kvbadev.wms.models.security.User;

@@ -1,18 +1,28 @@
 package com.kvbadev.wms.models.warehouse;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 import java.util.Objects;
 
 @Entity
 @Table(name = "shelves")
-public class Shelf implements Comparable<Shelf> {
+public class Shelf {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @NotBlank(message = "Name is mandatory")
+    @Size(min = 5, max = 50, message = "Name must be between 5 and 50 characters")
     private String name;
-    private int pos;
-    private int workingLoadLimit; //in grams
+    @NotNull
+    @Positive
+    private Integer pos;
+    @NotNull
+    @Positive
+    private Integer workingLoadLimit; //in grams
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rack_id")
     private Rack rack;
@@ -35,12 +45,28 @@ public class Shelf implements Comparable<Shelf> {
         return name;
     }
 
-    public int getPos() {
+    public Integer getPos() {
         return pos;
     }
 
-    public int getWorkingLoadLimit() {
+    public Integer getWorkingLoadLimit() {
         return workingLoadLimit;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPos(Integer pos) {
+        this.pos = pos;
+    }
+
+    public void setWorkingLoadLimit(Integer workingLoadLimit) {
+        this.workingLoadLimit = workingLoadLimit;
     }
 
     @Override
@@ -54,12 +80,6 @@ public class Shelf implements Comparable<Shelf> {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    @Override
-    public int compareTo(Shelf that) {
-        if(this.pos == that.pos) return 0;
-        return this.pos < that.pos ? -1 : 1;
     }
 
     public Rack getRack() {
