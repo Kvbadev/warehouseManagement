@@ -11,6 +11,14 @@ public class ItemDto {
 
     public ItemDto() {
     }
+
+    public ItemDto(String name, String description, Integer quantity, Long netPrice) {
+        this.name = name;
+        this.description = description;
+        this.quantity = quantity;
+        this.netPrice = netPrice;
+    }
+
     public String getName() {
         return name;
     }

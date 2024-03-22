@@ -19,7 +19,9 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.header.Header;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -27,6 +29,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.springframework.hateoas.MediaTypes.HAL_JSON;
+import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -68,7 +72,7 @@ public class ItemsController {
         );
     }
 
-    @PostMapping
+    @PostMapping(produces = HAL_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EntityModel<Item>> createItem(@RequestBody ItemDto itemDto) {
         Item item = itemMapper.itemDtoToItem(itemDto);
         if (itemDto.getParcelId() != null) {
@@ -88,35 +92,36 @@ public class ItemsController {
                 .body(itemModelAssembler.toModel(item));
     }
 
-    @PutMapping
-    public ResponseEntity<EntityModel<Item>> updateItem(@RequestBody ItemPutRequest itemDto) {
+    @PutMapping(produces = HAL_JSON_VALUE)
+    public ResponseEntity<EntityModel<Item>> putItem(@RequestBody ItemPutRequest itemPutRequest) {
         HttpStatus responseStatus = HttpStatus.CREATED;
-        if (itemDto.getId() != null) {
+
+        if (itemPutRequest.getId() != null) {
+            //if the resource already exists, change response to OK from CREATED
             responseStatus = HttpStatus.OK;
-            itemRepository.findById(itemDto.getId())
-                    .ifPresentOrElse(
-                            it -> itemDto.setId(it.getId()),
-                            () -> {
-                                throw new EntityNotFoundException(Item.class, itemDto.getId());
-                            }
-                    );
+            itemRepository.findById(itemPutRequest.getId())
+                    .orElseThrow(() -> new EntityNotFoundException(Item.class, itemPutRequest.getId()));
         }
 
-        Item newItem = itemMapper.itemDtoToItem(itemDto);
-        if (itemDto.getParcelId() != null) {
-            setParcelFromParcelId(newItem, itemDto.getParcelId());
+        Item newItem = itemMapper.itemPutToItem(itemPutRequest);
+        if (itemPutRequest.getParcelId() != null) {
+            setParcelFromParcelId(newItem, itemPutRequest.getParcelId());
         }
         newItem = itemRepository.save(newItem);
+        HttpHeaders headers = new HttpHeaders();
 
-        String itemLocation = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(newItem.getId())
-                .toUriString();
+        if(responseStatus == HttpStatus.CREATED) {
+            String itemLocation = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(newItem.getId())
+                    .toUriString();
+            headers.add(HttpHeaders.LOCATION, itemLocation);
+        }
 
         return ResponseEntity
                 .status(responseStatus)
-                .header(HttpHeaders.LOCATION, itemLocation)
+                .headers(headers)
                 .body(itemModelAssembler.toModel(newItem));
     }
 

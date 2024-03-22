@@ -23,7 +23,7 @@ public class ItemRepositoryTests {
     @Autowired
     private ItemRepository itemRepository;
 
-    Item testItem = new Item("Test1", "test2", 4450L);
+    Item testItem = new Item("Test1", "test2",1, 4450L);
 
     @Test
     @DisplayName("Check if an item is accessible and have correct data after adding to the itemRepository")

@@ -45,6 +45,9 @@ public class Item {
     public Integer getId() {
         return id;
     }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -99,7 +102,4 @@ public class Item {
         return Objects.hash(id, name, description, quantity, netPrice, parcel);
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
 }
