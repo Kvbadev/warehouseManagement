@@ -26,6 +26,9 @@ public class ParcelModelAssembler implements RepresentationModelAssembler<Parcel
         if(parcel.getDelivery() != null){
             links = links.and(linkTo(methodOn(ParcelsController.class).getParcel(parcel.getDelivery().getId())).withRel("delivery"));
         }
+//        if(parcel.getShelf() != null){
+//            links = links.and(linkTo(methodOn(ShelfC.class).getParcel(parcel.getDelivery().getId())).withRel("delivery"));
+//        }
         return EntityModel.of(parcel,links);
     }
 }

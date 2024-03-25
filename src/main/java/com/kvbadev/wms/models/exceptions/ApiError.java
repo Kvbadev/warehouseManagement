@@ -96,17 +96,16 @@ public class ApiError {
         subErrors.add(subError);
     }
 
-    private void appendValidationError(String object, String field, String rejectedValue, String message) {
-        addSubError(new ApiValidationError(object, field, rejectedValue, message));
+    private void appendValidationError(String object, String field, String message, Object rejectedValue) {
+        addSubError(new ApiValidationError(object, field, message, rejectedValue));
     }
 
     private void addValidationError(ConstraintViolation<?> cv) {
-        String invalidValue = cv.getInvalidValue() != null ? cv.getInvalidValue().toString() : null;
         this.appendValidationError(
                 cv.getRootBeanClass().getSimpleName(),
                 ((PathImpl) cv.getPropertyPath()).getLeafNode().asString(),
-                invalidValue,
-                cv.getMessage());
+                cv.getMessage(),
+                cv.getInvalidValue());
     }
 
     public void addValidationErrors(Set<ConstraintViolation<?>> constraintViolations) {

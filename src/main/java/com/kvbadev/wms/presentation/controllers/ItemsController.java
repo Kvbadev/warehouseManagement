@@ -3,7 +3,7 @@ package com.kvbadev.wms.presentation.controllers;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kvbadev.wms.ItemMapper;
+import com.kvbadev.wms.presentation.dataTransferObjects.mappers.ItemMapper;
 import com.kvbadev.wms.data.warehouse.ItemRepository;
 import com.kvbadev.wms.data.warehouse.ParcelRepository;
 import com.kvbadev.wms.models.exceptions.EmptyRequestParamException;
@@ -21,15 +21,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.web.header.Header;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -49,26 +46,27 @@ public class ItemsController {
     private final ObjectMapper objectMapper;
 
     public ItemsController(@Autowired ObjectMapper objectMapper) {
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        this.objectMapper = objectMapper;
+        this.objectMapper = objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         this.itemMapper = ItemMapper.INSTANCE;
     }
 
-    @GetMapping
+    @GetMapping(produces = HAL_JSON_VALUE)
     public ResponseEntity<CollectionModel<EntityModel<Item>>> getItems() {
         List<EntityModel<Item>> items = itemRepository.findAll().stream()
-                .map(item -> itemModelAssembler.toModel(item)).collect(Collectors.toList());
+                .map(item -> itemModelAssembler.toModel(item)).toList();
 
         return ResponseEntity.ok(
                 CollectionModel.of(items, linkTo(methodOn(ItemsController.class).getItems()).withSelfRel())
         );
     }
 
-    @GetMapping("{Id}")
+    @GetMapping(value = "{Id}", produces = HAL_JSON_VALUE)
     public ResponseEntity<EntityModel<Item>> getItem(@PathVariable("Id") int Id) {
-        Optional<Item> res = itemRepository.findById(Id);
         return ResponseEntity.ok(
-                res.map(itemModelAssembler::toModel).orElseThrow(() -> new EntityNotFoundException(Item.class, "id", Id))
+                itemRepository
+                        .findById(Id)
+                        .map(itemModelAssembler::toModel)
+                        .orElseThrow(() -> new EntityNotFoundException(Item.class, "id", Id))
         );
     }
 
@@ -110,7 +108,7 @@ public class ItemsController {
         newItem = itemRepository.save(newItem);
         HttpHeaders headers = new HttpHeaders();
 
-        if(responseStatus == HttpStatus.CREATED) {
+        if (responseStatus == HttpStatus.CREATED) {
             String itemLocation = ServletUriComponentsBuilder
                     .fromCurrentRequest()
                     .path("/{id}")
@@ -125,7 +123,7 @@ public class ItemsController {
                 .body(itemModelAssembler.toModel(newItem));
     }
 
-    @PatchMapping("{Id}")
+    @PatchMapping(value = "{Id}", produces = HAL_JSON_VALUE)
     public ResponseEntity<EntityModel<Item>> patchItem(@PathVariable("Id") int id,
                                                        @RequestBody ItemDto itemUpdateRequest
     ) throws JsonMappingException {
@@ -144,7 +142,7 @@ public class ItemsController {
         return ResponseEntity.ok(itemModelAssembler.toModel(item));
     }
 
-    @DeleteMapping("{Id}")
+    @DeleteMapping(value = "{Id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteItem(@PathVariable("Id") int Id) {
         try {
             itemRepository.deleteById(Id);
@@ -155,7 +153,7 @@ public class ItemsController {
         }
     }
 
-    @RequestMapping(params = "parcelId", method = RequestMethod.GET)
+    @RequestMapping(params = "parcelId", method = RequestMethod.GET, produces = HAL_JSON_VALUE)
     public ResponseEntity<CollectionModel<EntityModel<Item>>> getParcelItems(@RequestParam("parcelId") Optional<Integer> parcelId) {
 
         List<EntityModel<Item>> items = parcelId.map(pId ->

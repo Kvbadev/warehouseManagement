@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.sql.Date;
+
+import java.time.LocalDate;
 
 @ExtendWith(SpringExtension.class)
 public class ObjectMapperTests {
@@ -16,14 +17,14 @@ public class ObjectMapperTests {
 
     @Test
     public void mapEntityToPartialEntity() throws JsonMappingException {
-        Date now = new Date(System.currentTimeMillis());
+        LocalDate now = LocalDate.now();
         Delivery delivery = new Delivery(now);
         delivery.setId(1);
 
-        DeliveryDto deliveryDto = new DeliveryDto(Date.valueOf(now.toLocalDate().plusDays(4)));
+        DeliveryDto deliveryDto = new DeliveryDto(now.plusDays(4));
         objectMapper.updateValue(delivery, deliveryDto);
 
-        assert delivery.getArrivalDate().toLocalDate().equals(now.toLocalDate().plusDays(4));
+        assert delivery.getArrivalDate().equals(now.plusDays(4));
         assert delivery.getId() == 1;
     }
 }

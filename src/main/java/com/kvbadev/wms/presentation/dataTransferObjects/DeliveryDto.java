@@ -1,27 +1,25 @@
 package com.kvbadev.wms.presentation.dataTransferObjects;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class DeliveryDto {
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date arrivalDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate arrivalDate;
 
     public DeliveryDto() {}
 
-    public DeliveryDto(Date arrivalDate) {
+    public DeliveryDto(LocalDate arrivalDate) {
         this.arrivalDate = arrivalDate;
     }
 
-    public Date getArrivalDate() {
+    public LocalDate getArrivalDate() {
         return arrivalDate;
     }
 
-    public void setArrivalDate(Date arrivalDate) {
+    public void setArrivalDate(LocalDate arrivalDate) {
         this.arrivalDate = arrivalDate;
     }
 

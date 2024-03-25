@@ -14,7 +14,6 @@ import java.util.Objects;
 public class Parcel{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @NotNull
     private Integer id;
     @NotBlank(message = "Name is mandatory")
     @Size(min = 5, max = 50, message = "Name must be between 5 and 50 characters")

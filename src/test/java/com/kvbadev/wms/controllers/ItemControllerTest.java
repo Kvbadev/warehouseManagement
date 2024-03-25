@@ -2,14 +2,12 @@ package com.kvbadev.wms.controllers;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kvbadev.wms.ItemMapper;
 import com.kvbadev.wms.data.warehouse.ItemRepository;
 import com.kvbadev.wms.data.warehouse.ParcelRepository;
 import com.kvbadev.wms.models.exceptions.EntityNotFoundException;
 import com.kvbadev.wms.models.warehouse.Item;
 import com.kvbadev.wms.models.warehouse.Parcel;
 import com.kvbadev.wms.presentation.controllers.ItemsController;
-import com.kvbadev.wms.presentation.dataTransferObjects.ItemDto;
 import com.kvbadev.wms.presentation.modelAssemblers.ItemModelAssembler;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +18,8 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;

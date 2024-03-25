@@ -3,8 +3,7 @@ package com.kvbadev.wms.models.warehouse;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-
-import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "deliveries")
@@ -14,14 +13,14 @@ public class Delivery {
     private Integer id;
 
     @Column(name = "arrival_date")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @NotNull
-    private Date arrivalDate;
+    private LocalDate arrivalDate;
 
     public Delivery() {
     }
 
-    public Delivery(Date arrivalDate) {
+    public Delivery(LocalDate arrivalDate) {
         this.arrivalDate = arrivalDate;
     }
 
@@ -32,11 +31,11 @@ public class Delivery {
         this.id = id;
     }
 
-    public Date getArrivalDate() {
+    public LocalDate getArrivalDate() {
         return arrivalDate;
     }
 
-    public void setArrivalDate(Date arrivalDate) {
+    public void setArrivalDate(LocalDate arrivalDate) {
         this.arrivalDate = arrivalDate;
     }
 }
