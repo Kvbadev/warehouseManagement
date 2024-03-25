@@ -184,6 +184,7 @@ public class DeliveryControllerTests {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.arrivalDate").value(newCurrent.toString()));
+
     }
     @Test
     void deleteDeliveryReturnsNoContent() throws Exception {
