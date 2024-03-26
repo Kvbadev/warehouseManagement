@@ -30,11 +30,8 @@ public class AppConfig {
     }
 
     @Bean
-    public MappingJackson2HttpMessageConverter messageMappingConverter() {
-        final var om = new ObjectMapper();
-        om.setSerializationInclusion(JsonInclude.Include.ALWAYS);
-        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
-        return new MappingJackson2HttpMessageConverter(om);
+    public ObjectMapper jsonObjectMapper() {
+        return new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
     @Bean

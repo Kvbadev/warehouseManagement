@@ -1,5 +1,6 @@
 package com.kvbadev.wms.models.security;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kvbadev.wms.models.validation.Password;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -7,22 +8,27 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
+// many-to-many: users -> users_roles <- roles
 @Entity
 @Table(name = "users")
 public class User {
     @Id
-    @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "first_name")
     @NotBlank(message = "First name is mandatory")
     @Size(min = 3, max = 50, message = "First name must be between 3 and 50 characters")
+    @NotNull
     private String firstName;
     @Column(name = "last_name")
     @NotBlank(message = "Last name is mandatory")
     @Size(min = 3, max = 50, message = "Last name must be between 3 and 50 characters")
+    @NotNull
     private String lastName;
     @Email
     @NotNull
@@ -32,6 +38,18 @@ public class User {
     @NotNull
     private Boolean enabled;
 
+    @JsonIgnore
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE})
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(
+                    name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "role_id", referencedColumnName = "id"))
+    private Set<Role> roles = new HashSet<>();
+
     public User() {
     }
 
@@ -40,6 +58,17 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.enabled = true;
+    }
+
+    public User(User user) {
+        this.id = user.id;
+        this.firstName = user.firstName;
+        this.lastName = user.lastName;
+        this.email = user.email;
+        this.password = user.password;
+        this.enabled = user.enabled;
+        this.roles = user.roles;
     }
 
     public Integer getId() {
@@ -88,6 +117,24 @@ public class User {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
+        role.getUsers().add(this);
+    }
+
+    public void removeRole(Role role) {
+        roles.remove(role);
+        role.getUsers().remove(this);
     }
 
     @Override

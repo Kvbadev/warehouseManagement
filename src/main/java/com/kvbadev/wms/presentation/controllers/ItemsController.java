@@ -23,9 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import java.util.List;
-import java.util.Optional;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -154,15 +152,12 @@ public class ItemsController {
     }
 
     @RequestMapping(params = "parcelId", method = RequestMethod.GET, produces = HAL_JSON_VALUE)
-    public ResponseEntity<CollectionModel<EntityModel<Item>>> getParcelItems(@RequestParam("parcelId") Optional<Integer> parcelId) {
+    public ResponseEntity<CollectionModel<EntityModel<Item>>> getParcelItems(@RequestParam("parcelId") Integer parcelId) {
 
-        List<EntityModel<Item>> items = parcelId.map(pId ->
-                itemRepository
-                        .findItemsByParcelId(pId)
-                        .stream()
-                        .map(itemModelAssembler::toModel).toList()
-
-        ).orElseThrow(() -> new EmptyRequestParamException("parcelId"));
+        List<EntityModel<Item>> items = itemRepository
+                .findItemsByParcelId(parcelId)
+                .stream()
+                .map(itemModelAssembler::toModel).toList();
 
         return ResponseEntity.ok(
                 CollectionModel.of(items, linkTo(methodOn(ItemsController.class).getParcelItems(parcelId)).withSelfRel())

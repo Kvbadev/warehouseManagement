@@ -3,6 +3,7 @@ package com.kvbadev.wms.services;
 import com.kvbadev.wms.data.security.PrivilegeRepository;
 import com.kvbadev.wms.data.security.RoleRepository;
 import com.kvbadev.wms.data.security.UserRepository;
+import com.kvbadev.wms.models.exceptions.EntityNotFoundException;
 import com.kvbadev.wms.models.security.Privilege;
 import com.kvbadev.wms.models.security.Role;
 import com.kvbadev.wms.models.security.User;
@@ -13,8 +14,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
