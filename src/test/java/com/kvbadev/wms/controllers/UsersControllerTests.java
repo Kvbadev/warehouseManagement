@@ -2,18 +2,18 @@ package com.kvbadev.wms.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kvbadev.wms.data.security.UserRepository;
+import com.kvbadev.wms.models.exceptions.DuplicateResourceException;
 import com.kvbadev.wms.models.exceptions.EntityNotFoundException;
 import com.kvbadev.wms.models.security.User;
-import com.kvbadev.wms.presentation.controllers.DeliveriesController;
 import com.kvbadev.wms.presentation.controllers.UsersController;
-import com.kvbadev.wms.presentation.modelAssemblers.UserModelAssembler;
+import com.kvbadev.wms.presentation.modelAssemblers.UserViewModelAssembler;
 import com.kvbadev.wms.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.hateoas.EntityModel;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
@@ -30,30 +31,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(value = UsersController.class, excludeAutoConfiguration = {UsersController.class})
 @AutoConfigureMockMvc(addFilters = false)
+@Import(UserViewModelAssembler.class)
 public class UsersControllerTests {
     @Autowired
     private MockMvc mockMvc;
-    @MockBean
-    private UserModelAssembler UserModelAssembler;
     @MockBean
     private UserRepository userRepository;
     @MockBean
     private UserService userService;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private UserViewModelAssembler userViewModelAssembler;
     private final User testUser = new User("fffff", "lllll", "mail@mail.com", "Pa$$20dkls..3");
 
     @Test
     void findAllDeliveriesShouldReturnCollectionModelOfUserEntityModels() throws Exception {
-        List<User> Deliveries = new ArrayList<>(
+        List<User> users = new ArrayList<>(
                 List.of(
                         testUser
                 )
         );
-        when(userRepository.findAll()).thenReturn(Deliveries);
-        when(UserModelAssembler.toModel(any(User.class)))
-                .thenReturn(EntityModel.of(Deliveries.get(0)));
-
+        when(userRepository.findAll()).thenReturn(users);
         this.mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
                 .andExpect(content()
@@ -65,7 +64,6 @@ public class UsersControllerTests {
     @Test
     void findOneUserShouldReturnUserEntityModel() throws Exception {
         when(userRepository.findById(2)).thenReturn(Optional.of(testUser));
-        when(UserModelAssembler.toModel(testUser)).thenReturn(EntityModel.of(testUser));
 
         this.mockMvc.perform(get("/users/2"))
                 .andExpect(status().isOk())
@@ -89,12 +87,10 @@ public class UsersControllerTests {
     @Test
     void createUserWithCorrectBodyReturnsHttpCreated() throws Exception {
         User user = new User(testUser);
-        when(userRepository.save(any())).thenAnswer(invocation -> {
-            user.setId(1);
-            return user;
-        });
+        user.setId(1);
+        when(userRepository.save(any())).thenReturn(user);
+        when(userService.saveUser(any())).thenReturn(user);
 
-        when(UserModelAssembler.toModel(user)).thenReturn(EntityModel.of(user));
 
         this.mockMvc.perform(post("/users")
                         .content(objectMapper.writeValueAsString(user))
@@ -107,18 +103,27 @@ public class UsersControllerTests {
     }
 
     @Test
+    void createUserWithSameEmailThrowsDuplicateException() throws Exception {
+        when(userService.saveUser(any())).thenThrow(new DuplicateResourceException(User.class, "email", testUser.getEmail()));
+        this.mockMvc.perform(post("/users")
+                        .content(objectMapper.writeValueAsString(testUser))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
     void putUserWithExistingIdReturnsHttpOkAndLocationIsNotSet() throws Exception {
         User putRequest = new User("alsjdfka", "lfaksdl", "mail@mai2.com", "P@#safdasdfk003@.");
         User user = new User(testUser);
         putRequest.setId(1);
         user.setId(1);
+        when(userService.updateUser(any())).thenReturn(user);
 
         objectMapper.updateValue(user, putRequest);
 
         when(userRepository.save(any())).thenReturn(user);
         when(userRepository.findById(1)).thenReturn(Optional.of(user));
 
-        when(UserModelAssembler.toModel(user)).thenReturn(EntityModel.of(user));
 
         this.mockMvc.perform(put("/users")
                         .content(objectMapper.writeValueAsString(putRequest))
@@ -130,21 +135,21 @@ public class UsersControllerTests {
 
     @Test
     void putUserWithoutIdReturnsHttpCreatedAndLocationIsSet() throws Exception {
-        User u = new User(testUser);
+        User user = new User(testUser);
 
-        when(userRepository.save(any())).thenAnswer(invocation -> {
-            u.setId(1);
-            return u;
+        when(userService.updateUser(any())).thenAnswer(invocation -> {
+            user.setId(1);
+            return user;
         });
-        when(userRepository.findById(1)).thenReturn(Optional.of(u));
+        when(userRepository.save(any())).thenReturn(user);
+        when(userRepository.findById(1)).thenReturn(Optional.of(user));
 
-        when(UserModelAssembler.toModel(u)).thenReturn(EntityModel.of(u));
 
         this.mockMvc.perform(put("/users")
-                        .content(objectMapper.writeValueAsString(u))
+                        .content(objectMapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.email").value(u.getEmail()))
+                .andExpect(jsonPath("$.email").value(user.getEmail()))
                 .andExpect(header().stringValues("Location", "http://localhost/users/1")); //no api context path because it's a test
     }
 
@@ -153,27 +158,29 @@ public class UsersControllerTests {
         User patchRequests = new User(testUser);
         patchRequests.setLastName("imminnea");
         User u = new User(testUser);
+        u.setId(1);
 
         when(userRepository.save(any())).thenAnswer(invocation -> {
             objectMapper.updateValue(u, patchRequests);
             return u;
         });
-        when(userRepository.findById(1)).thenReturn(Optional.of(u));
+        when(userService.updateUser(any(), anyInt())).thenReturn(u);
 
-        when(UserModelAssembler.toModel(u)).thenReturn(EntityModel.of(u));
 
         this.mockMvc.perform(patch("/users/1")
                         .content(objectMapper.writeValueAsString(u))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.lastName").value("imminnea"));
+                .andExpect(jsonPath("$.lastName").value(u.getLastName()));
 
     }
+
     @Test
     void deleteUserReturnsNoContent() throws Exception {
         this.mockMvc.perform(delete("/users/1"))
                 .andExpect(status().isNoContent());
     }
+
     @Test
     void deleteUserIncorrectIdReturns404() throws Exception {
         doThrow(new EntityNotFoundException(User.class, 233)).when(userRepository).deleteById(any());

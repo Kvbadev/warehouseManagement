@@ -3,18 +3,20 @@ package com.kvbadev.wms.presentation.controllers;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kvbadev.wms.presentation.dataTransferObjects.mappers.ParcelMapper;
 import com.kvbadev.wms.data.warehouse.DeliveryRepository;
 import com.kvbadev.wms.data.warehouse.ParcelRepository;
 import com.kvbadev.wms.data.warehouse.ShelfRepository;
 import com.kvbadev.wms.models.exceptions.EmptyRequestParamException;
 import com.kvbadev.wms.models.exceptions.EntityNotFoundException;
 import com.kvbadev.wms.models.warehouse.Delivery;
+import com.kvbadev.wms.models.warehouse.Item;
 import com.kvbadev.wms.models.warehouse.Parcel;
 import com.kvbadev.wms.models.warehouse.Shelf;
 import com.kvbadev.wms.presentation.dataTransferObjects.ParcelDto;
 import com.kvbadev.wms.presentation.dataTransferObjects.ParcelPutRequest;
+import com.kvbadev.wms.presentation.dataTransferObjects.mappers.ParcelMapper;
 import com.kvbadev.wms.presentation.modelAssemblers.ParcelModelAssembler;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.hateoas.CollectionModel;
@@ -24,7 +26,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +37,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/parcels")
-public class ParcelsController {
+public class ParcelsController extends BaseController{
     @Autowired
     private ParcelRepository parcelRepository;
     @Autowired
@@ -45,13 +46,7 @@ public class ParcelsController {
     private DeliveryRepository deliveryRepository;
     @Autowired
     private ShelfRepository shelfRepository;
-    private final ObjectMapper objectMapper;
-    private final ParcelMapper parcelMapper;
-
-    public ParcelsController(@Autowired ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        this.parcelMapper = ParcelMapper.INSTANCE;
-    }
+    private final ParcelMapper parcelMapper = ParcelMapper.INSTANCE;
 
     @GetMapping(produces = HAL_JSON_VALUE)
     public ResponseEntity<CollectionModel<EntityModel<Parcel>>> getParcels() {
@@ -74,7 +69,7 @@ public class ParcelsController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = HAL_JSON_VALUE)
-    public ResponseEntity<EntityModel<Parcel>> createParcel(@RequestBody ParcelDto parcelCreateRequest) {
+    public ResponseEntity<EntityModel<Parcel>> createParcel(@Valid @RequestBody ParcelDto parcelCreateRequest) {
         Parcel parcel = parcelMapper.parcelDtoToParcel(parcelCreateRequest);
         if (parcelCreateRequest.getDeliveryId() != null) {
             setDeliveryFromDeliveryId(parcel, parcelCreateRequest.getDeliveryId());
@@ -83,16 +78,9 @@ public class ParcelsController {
             setShelfFromShelfId(parcel, parcelCreateRequest.getShelfId());
         }
         parcel = parcelRepository.save(parcel);
-
-        String parcelLocation = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(parcel.getId())
-                .toUriString();
-
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .header(HttpHeaders.LOCATION, parcelLocation)
+                .header(HttpHeaders.LOCATION, buildLocationHeader(parcel.getId()))
                 .body(parcelModelAssembler.toModel(parcel));
     }
 
@@ -100,17 +88,18 @@ public class ParcelsController {
     public ResponseEntity<EntityModel<Parcel>> patchParcel(
             @PathVariable("id") int id,
             @RequestBody ParcelDto parcelUpdateRequest
-    ) throws JsonMappingException {
+    ) {
         Parcel parcel = parcelRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(Parcel.class, id));
+        Parcel parcelUpdate = parcelMapper.parcelDtoToParcel(parcelUpdateRequest);
 
-        objectMapper.updateValue(parcel, parcelUpdateRequest);
+        parcelMapper.update(parcel, parcelUpdate);
         parcelRepository.save(parcel);
 
         return ResponseEntity.ok(parcelModelAssembler.toModel(parcel));
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = HAL_JSON_VALUE)
-    public ResponseEntity<EntityModel<Parcel>> updateParcel(@RequestBody ParcelPutRequest parcelUpdateRequest) {
+    public ResponseEntity<EntityModel<Parcel>> updateParcel(@Valid @RequestBody ParcelPutRequest parcelUpdateRequest) {
         HttpStatus responseStatus = HttpStatus.CREATED;
 
         if (parcelUpdateRequest.getId() != null) {
@@ -132,12 +121,7 @@ public class ParcelsController {
         HttpHeaders headers = new HttpHeaders();
 
         if (responseStatus == HttpStatus.CREATED) {
-            String parcelLocation = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(newParcel.getId())
-                    .toUriString();
-            headers.add(HttpHeaders.LOCATION, parcelLocation);
+            headers.add(HttpHeaders.LOCATION, buildLocationHeader(newParcel.getId()));
         }
 
         return ResponseEntity
@@ -153,7 +137,7 @@ public class ParcelsController {
                         parcelRepository
                                 .findByItemId(pId)
                                 .map(parcelModelAssembler::toModel)
-                                .orElseThrow(() -> new EntityNotFoundException(Parcel.class, "itemId", itemId.get()))
+                                .orElseThrow(() -> new EntityNotFoundException(Item.class, "parcelId", null))
                 ).orElseThrow(() -> new EmptyRequestParamException("itemId"))
         );
     }
@@ -165,7 +149,7 @@ public class ParcelsController {
             return ResponseEntity.noContent().build();
 
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException(Parcel.class, "id", id);
+            throw new EntityNotFoundException(Parcel.class, id);
         }
     }
 

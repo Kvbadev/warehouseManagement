@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(value = ItemsController.class, excludeAutoConfiguration = {ItemsController.class})
 @AutoConfigureMockMvc(addFilters = false)
-public class ItemControllerTest {
+public class ItemControllerTests {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
@@ -43,7 +43,7 @@ public class ItemControllerTest {
     private ParcelRepository parcelRepository;
     private final ObjectMapper objectMapper;
 
-    public ItemControllerTest(@Autowired ObjectMapper objectMapper) {
+    public ItemControllerTests(@Autowired ObjectMapper objectMapper) {
         this.objectMapper = objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
@@ -139,7 +139,7 @@ public class ItemControllerTest {
 
     @Test
     void putItemWithoutIdReturnsHttpCreatedAndLocationIsSet() throws Exception {
-        Item item = new Item("name", "test", 4, 432L);
+        Item item = new Item("name22", "test", 4, 432L);
 
         when(itemRepository.save(any())).thenAnswer(invocation -> {
             item.setId(1);
@@ -153,7 +153,7 @@ public class ItemControllerTest {
                         .content(objectMapper.writeValueAsString(item))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("name"))
+                .andExpect(jsonPath("$.name").value(item.getName()))
                 .andExpect(header().stringValues("Location", "http://localhost/items/1")); //no api context path because it's a test
     }
 

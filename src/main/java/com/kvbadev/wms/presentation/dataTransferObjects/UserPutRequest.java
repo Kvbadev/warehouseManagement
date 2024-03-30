@@ -1,15 +1,22 @@
 package com.kvbadev.wms.presentation.dataTransferObjects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.beans.ConstructorProperties;
+import java.util.List;
 import java.util.Objects;
 
 public class UserPutRequest extends UserDto{
-    private Integer id;
+    private final Integer id;
 
     public Integer getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    @JsonCreator
+    @ConstructorProperties({"id","firstName","lastName","email","password","rolesId"})
+    public UserPutRequest(Integer id, String firstName, String lastName, String email, String password, List<Integer> rolesId) {
+        super(firstName, lastName, email, password, rolesId);
         this.id = id;
     }
 

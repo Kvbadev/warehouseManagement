@@ -1,26 +1,26 @@
 package com.kvbadev.wms.presentation.dataTransferObjects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotNull;
 
+import java.beans.ConstructorProperties;
 import java.time.LocalDate;
 import java.util.Objects;
 
 public class DeliveryDto {
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate arrivalDate;
+    @NotNull
+    private final LocalDate arrivalDate;
 
-    public DeliveryDto() {}
-
-    public DeliveryDto(LocalDate arrivalDate) {
+    @JsonCreator
+    @ConstructorProperties({"arrivalDate"})
+    public DeliveryDto(@NotNull LocalDate arrivalDate) {
         this.arrivalDate = arrivalDate;
     }
 
-    public LocalDate getArrivalDate() {
+    public @NotNull LocalDate getArrivalDate() {
         return arrivalDate;
-    }
-
-    public void setArrivalDate(LocalDate arrivalDate) {
-        this.arrivalDate = arrivalDate;
     }
 
     @Override

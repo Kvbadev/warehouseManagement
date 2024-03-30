@@ -1,46 +1,47 @@
 package com.kvbadev.wms.presentation.dataTransferObjects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
+import java.beans.ConstructorProperties;
 import java.util.Objects;
 
 public class ParcelDto {
-    private String name;
-    private Integer weight;
-    private Integer deliveryId;
-    private Integer shelfId;
+    @NotBlank(message = "Name is mandatory")
+    @Size(min = 5, max = 50, message = "Name must be between 5 and 50 characters")
+    private final String name;
+    @Positive(message = "Weight must be greater than 0")
+    @NotNull
+    private final Integer weight; //weight in grams
+    private final Integer deliveryId;
+    private final Integer shelfId;
 
-    public ParcelDto() {
+    @JsonCreator
+    @ConstructorProperties({"name","weight","deliveryId","shelfId"})
+    public ParcelDto(String name, @NotNull Integer weight, Integer deliveryId, Integer shelfId) {
+        this.name = name;
+        this.weight = weight;
+        this.deliveryId = deliveryId;
+        this.shelfId = shelfId;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getWeight() {
+    public @NotNull Integer getWeight() {
         return weight;
-    }
-
-    public void setWeight(Integer weight) {
-        this.weight = weight;
     }
 
     public Integer getDeliveryId() {
         return deliveryId;
     }
 
-    public void setDeliveryId(Integer deliveryId) {
-        this.deliveryId = deliveryId;
-    }
-
     public Integer getShelfId() {
         return shelfId;
-    }
-
-    public void setShelfId(Integer shelfId) {
-        this.shelfId = shelfId;
     }
 
     @Override

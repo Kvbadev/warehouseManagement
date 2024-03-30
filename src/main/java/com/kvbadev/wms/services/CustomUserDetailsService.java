@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @Service
@@ -34,14 +35,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            throw new UsernameNotFoundException(email);
-        }
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(), user.getPassword(), user.isEnabled(), true, true, true,
-                getAuthorities(roleRepository.findByUser(user.getEmail()))
-        );
+        return userRepository.findByEmail(email)
+                .map(u -> new org.springframework.security.core.userdetails.User(
+                        u.getEmail(), u.getPassword(), u.isEnabled(), true, true, true,
+                        getAuthorities(roleRepository.findByUser(u.getEmail()))
+                )).orElseThrow(() -> new EntityNotFoundException(User.class, "email", email));
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(Collection<Role> roles) {

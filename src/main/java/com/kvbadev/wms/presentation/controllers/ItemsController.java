@@ -13,6 +13,7 @@ import com.kvbadev.wms.models.warehouse.Parcel;
 import com.kvbadev.wms.presentation.dataTransferObjects.ItemDto;
 import com.kvbadev.wms.presentation.dataTransferObjects.ItemPutRequest;
 import com.kvbadev.wms.presentation.modelAssemblers.ItemModelAssembler;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.hateoas.CollectionModel;
@@ -31,7 +32,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/items")
-public class ItemsController {
+public class ItemsController extends BaseController{
     @Autowired
     private ItemRepository itemRepository;
 
@@ -40,13 +41,7 @@ public class ItemsController {
 
     @Autowired
     private ItemModelAssembler itemModelAssembler;
-    private final ItemMapper itemMapper;
-    private final ObjectMapper objectMapper;
-
-    public ItemsController(@Autowired ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        this.itemMapper = ItemMapper.INSTANCE;
-    }
+    private final ItemMapper itemMapper = ItemMapper.INSTANCE;
 
     @GetMapping(produces = HAL_JSON_VALUE)
     public ResponseEntity<CollectionModel<EntityModel<Item>>> getItems() {
@@ -64,39 +59,32 @@ public class ItemsController {
                 itemRepository
                         .findById(Id)
                         .map(itemModelAssembler::toModel)
-                        .orElseThrow(() -> new EntityNotFoundException(Item.class, "id", Id))
+                        .orElseThrow(() -> new EntityNotFoundException(Item.class, Id))
         );
     }
 
     @PostMapping(produces = HAL_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EntityModel<Item>> createItem(@RequestBody ItemDto itemDto) {
+    public ResponseEntity<EntityModel<Item>> createItem(@Valid @RequestBody ItemDto itemDto) {
         Item item = itemMapper.itemDtoToItem(itemDto);
         if (itemDto.getParcelId() != null) {
             setParcelFromParcelId(item, itemDto.getParcelId());
         }
         item = itemRepository.save(item);
 
-        String itemLocation = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(item.getId())
-                .toUriString();
-
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .header(HttpHeaders.LOCATION, itemLocation)
+                .header(HttpHeaders.LOCATION, buildLocationHeader(item.getId()))
                 .body(itemModelAssembler.toModel(item));
     }
 
     @PutMapping(produces = HAL_JSON_VALUE)
-    public ResponseEntity<EntityModel<Item>> putItem(@RequestBody ItemPutRequest itemPutRequest) {
+    public ResponseEntity<EntityModel<Item>> putItem(@Valid @RequestBody ItemPutRequest itemPutRequest) {
         HttpStatus responseStatus = HttpStatus.CREATED;
 
         if (itemPutRequest.getId() != null) {
-            //if the resource already exists, change response to OK from CREATED
-            responseStatus = HttpStatus.OK;
             itemRepository.findById(itemPutRequest.getId())
                     .orElseThrow(() -> new EntityNotFoundException(Item.class, itemPutRequest.getId()));
+            responseStatus = HttpStatus.OK;
         }
 
         Item newItem = itemMapper.itemPutToItem(itemPutRequest);
@@ -107,12 +95,7 @@ public class ItemsController {
         HttpHeaders headers = new HttpHeaders();
 
         if (responseStatus == HttpStatus.CREATED) {
-            String itemLocation = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(newItem.getId())
-                    .toUriString();
-            headers.add(HttpHeaders.LOCATION, itemLocation);
+            headers.add(HttpHeaders.LOCATION, buildLocationHeader(newItem.getId()));
         }
 
         return ResponseEntity
@@ -124,12 +107,12 @@ public class ItemsController {
     @PatchMapping(value = "{Id}", produces = HAL_JSON_VALUE)
     public ResponseEntity<EntityModel<Item>> patchItem(@PathVariable("Id") int id,
                                                        @RequestBody ItemDto itemUpdateRequest
-    ) throws JsonMappingException {
+    ) {
         Item item = itemRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(Item.class, id));
 
         //update shallow values
         Item itemRequest = itemMapper.itemDtoToItem(itemUpdateRequest);
-        objectMapper.updateValue(item, itemRequest);
+        itemMapper.update(item, itemRequest);
 
         //update parcel
         if (itemUpdateRequest.getParcelId() != null) {
@@ -147,7 +130,7 @@ public class ItemsController {
             return ResponseEntity.noContent().build();
 
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException(Item.class, "id", Id);
+            throw new EntityNotFoundException(Item.class, Id);
         }
     }
 
@@ -173,5 +156,4 @@ public class ItemsController {
                         }
                 );
     }
-
 }

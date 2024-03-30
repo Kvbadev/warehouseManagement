@@ -9,11 +9,9 @@ import com.kvbadev.wms.data.warehouse.ShelfRepository;
 import com.kvbadev.wms.models.exceptions.EntityNotFoundException;
 import com.kvbadev.wms.models.warehouse.Item;
 import com.kvbadev.wms.models.warehouse.Parcel;
-import com.kvbadev.wms.presentation.controllers.ItemsController;
 import com.kvbadev.wms.presentation.controllers.ParcelsController;
 import com.kvbadev.wms.presentation.modelAssemblers.ParcelModelAssembler;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -36,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(value = ParcelsController.class, excludeAutoConfiguration = {ParcelsController.class})
 @AutoConfigureMockMvc(addFilters = false)
-public class ParcelControllerTest {
+public class ParcelControllerTests {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
@@ -51,7 +49,7 @@ public class ParcelControllerTest {
     private ItemRepository itemRepository;
     private final ObjectMapper objectMapper;
 
-    public ParcelControllerTest(@Autowired ObjectMapper objectMapper) {
+    public ParcelControllerTests(@Autowired ObjectMapper objectMapper) {
         this.objectMapper = objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
@@ -147,7 +145,7 @@ public class ParcelControllerTest {
 
     @Test
     void putParcelWithoutIdReturnsHttpCreatedAndLocationIsSet() throws Exception {
-        Parcel parcel = new Parcel("name", 432);
+        Parcel parcel = new Parcel("name22", 432);
 
         when(parcelRepository.save(any())).thenAnswer(invocation -> {
             parcel.setId(1);
@@ -161,7 +159,7 @@ public class ParcelControllerTest {
                         .content(objectMapper.writeValueAsString(parcel))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("name"))
+                .andExpect(jsonPath("$.name").value(parcel.getName()))
                 .andExpect(header().stringValues("Location", "http://localhost/parcels/1")); //no api context path because it's a test
     }
 

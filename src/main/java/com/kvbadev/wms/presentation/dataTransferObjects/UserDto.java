@@ -1,83 +1,71 @@
 package com.kvbadev.wms.presentation.dataTransferObjects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.kvbadev.wms.models.validation.Password;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+import java.beans.ConstructorProperties;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class UserDto {
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String password;
-    private Boolean enabled;
-    private List<Integer> rolesId;
+    @NotBlank(message = "First name is mandatory")
+    @Size(min = 3, max = 50, message = "First name must be between 3 and 50 characters")
+    private final String firstName;
+    @NotBlank(message = "Last name is mandatory")
+    @Size(min = 3, max = 50, message = "Last name must be between 3 and 50 characters")
+    private final String lastName;
+    @Email
+    @NotBlank
+    private final String email;
+    @Password
+    private final String password;
+    private final List<Integer> rolesId;
 
-    public UserDto() {
-    }
-
-    public UserDto(String firstName, String lastName, String email, String password) {
+    @JsonCreator
+    @ConstructorProperties({"firstName","lastName","email","password","rolesId"})
+    public UserDto(String firstName, String lastName, String email, String password, List<Integer> rolesId){
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.rolesId = rolesId;
     }
 
     public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
     public String getLastName() {
         return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
     }
 
     public List<Integer> getRolesId() {
         return rolesId;
     }
 
-    public void setRolesId(List<Integer> rolesId) {
-        this.rolesId = rolesId;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof UserDto userDto)) return false;
-        return Objects.equals(firstName, userDto.firstName) && Objects.equals(lastName, userDto.lastName) && Objects.equals(email, userDto.email) && Objects.equals(password, userDto.password) && Objects.equals(enabled, userDto.enabled) && Objects.equals(rolesId, userDto.rolesId);
+        return Objects.equals(firstName, userDto.firstName) && Objects.equals(lastName, userDto.lastName) && Objects.equals(email, userDto.email) && Objects.equals(password, userDto.password) && Objects.equals(rolesId, userDto.rolesId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, email, password, enabled, rolesId);
+        return Objects.hash(firstName, lastName, email, password, rolesId);
     }
 }

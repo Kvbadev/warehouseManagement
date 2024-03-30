@@ -1,61 +1,56 @@
 package com.kvbadev.wms.presentation.dataTransferObjects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
+import java.beans.ConstructorProperties;
 import java.util.Objects;
 
 public class ItemDto {
-    private String name;
-    private String description;
-    private Integer quantity;
-    private Long netPrice;
-    private Integer parcelId;
+    @NotBlank(message = "Name is mandatory")
+    @Size(min = 5, max = 50, message = "Name must be between 5 and 50 characters")
+    private final String name;
+    @Size(max = 255, message = "Description length must not be greater than 255 characters")
+    private final String description;
+    @Positive(message = "Quantity must be greater than 0")
+    @NotNull
+    private final Integer quantity;
+    @Positive(message = "Net price must be greater than 0")
+    @NotNull
+    private final Long netPrice;
+    private final Integer parcelId;
 
-    public ItemDto() {
-    }
-
-    public ItemDto(String name, String description, Integer quantity, Long netPrice) {
+    @ConstructorProperties({"name","description","quantity","netPrice","parcelId"})
+    @JsonCreator
+    public ItemDto(String name, String description, @NotNull Integer quantity, @NotNull Long netPrice, Integer parcelId) {
         this.name = name;
         this.description = description;
         this.quantity = quantity;
         this.netPrice = netPrice;
+        this.parcelId = parcelId;
     }
 
-    public String getName() {
+    public @NotNull String getName() {
         return name;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Integer getQuantity() {
+    public @NotNull Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public Long getNetPrice() {
+    public @NotNull Long getNetPrice() {
         return netPrice;
     }
 
-    public void setNetPrice(Long netPrice) {
-        this.netPrice = netPrice;
-    }
     public Integer getParcelId() {
         return parcelId;
-    }
-
-    public void setParcelId(Integer parcelId) {
-        this.parcelId = parcelId;
     }
     @Override
     public boolean equals(Object o) {

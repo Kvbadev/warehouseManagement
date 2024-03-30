@@ -1,17 +1,26 @@
 package com.kvbadev.wms.presentation.dataTransferObjects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import jakarta.validation.constraints.NotNull;
+
+import java.beans.ConstructorProperties;
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class DeliveryPutRequest extends DeliveryDto{
-    private Integer id;
+    private final Integer id;
+
+    @JsonCreator
+    @ConstructorProperties({"id","arrivalDate"})
+    public DeliveryPutRequest(Integer id, @NotNull LocalDate arrivalDate) {
+        super(arrivalDate);
+        this.id = id;
+    }
 
     public Integer getId() {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     @Override
     public boolean equals(Object o) {

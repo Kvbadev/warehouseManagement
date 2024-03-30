@@ -14,7 +14,6 @@ public class Delivery {
 
     @Column(name = "arrival_date")
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @NotNull
     private LocalDate arrivalDate;
 
     public Delivery() {

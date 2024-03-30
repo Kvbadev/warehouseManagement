@@ -19,23 +19,18 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     @Column(name = "first_name")
     @NotBlank(message = "First name is mandatory")
     @Size(min = 3, max = 50, message = "First name must be between 3 and 50 characters")
-    @NotNull
     private String firstName;
     @Column(name = "last_name")
     @NotBlank(message = "Last name is mandatory")
     @Size(min = 3, max = 50, message = "Last name must be between 3 and 50 characters")
-    @NotNull
     private String lastName;
-    @Email
-    @NotNull
+    @NotBlank
     private String email;
-    @Password
+    @NotBlank
     private String password;
-    @NotNull
     private Boolean enabled;
 
     @JsonIgnore

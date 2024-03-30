@@ -16,10 +16,7 @@ public class Parcel{
     @Id
     private Integer id;
     @NotBlank(message = "Name is mandatory")
-    @Size(min = 5, max = 50, message = "Name must be between 5 and 50 characters")
-    @NotNull
     private String name;
-    @NotNull
     @Positive(message = "Weight must be greater than 0")
     private Integer weight; //weight in grams
 

@@ -1,11 +1,10 @@
-package com.kvbadev.wms.models.exceptions;
+package com.kvbadev.wms.presentation.errors;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.ConstraintViolation;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -96,19 +95,28 @@ public class ApiError {
         subErrors.add(subError);
     }
 
-    private void appendValidationError(String object, String field, String message, Object rejectedValue) {
-        addSubError(new ApiValidationError(object, field, message, rejectedValue));
-    }
-
     private void addValidationError(ConstraintViolation<?> cv) {
-        this.appendValidationError(
+        addSubError(new ApiValidationError(
                 cv.getRootBeanClass().getSimpleName(),
                 ((PathImpl) cv.getPropertyPath()).getLeafNode().asString(),
                 cv.getMessage(),
-                cv.getInvalidValue());
+                cv.getInvalidValue())
+        );
+    }
+
+    private void addFieldError(FieldError er) {
+        addSubError(new ApiFieldError(
+                er.getField(),
+                er.getDefaultMessage(),
+                er.getRejectedValue()
+        ));
     }
 
     public void addValidationErrors(Set<ConstraintViolation<?>> constraintViolations) {
         constraintViolations.forEach(this::addValidationError);
+    }
+
+    public void addFieldErrors(List<FieldError> fieldErrors) {
+        fieldErrors.forEach(this::addFieldError);
     }
 }

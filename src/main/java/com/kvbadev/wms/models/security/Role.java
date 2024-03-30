@@ -15,7 +15,7 @@ import java.util.Set;
 @Table(name = "roles")
 public class Role {
     @Id
-    @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @NotBlank(message = "Name is mandatory")

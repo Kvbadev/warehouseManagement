@@ -15,19 +15,13 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Integer id;
-
     @NotBlank(message = "Name is mandatory")
-    @Size(min = 5, max = 50, message = "Name must be between 5 and 50 characters")
-    @NotNull
     private String name;
-    @Size(max = 255, message = "Description length must not be greater than 255 characters")
     private String description;
     @Positive(message = "Quantity must be greater than 0")
-    @NotNull
     private Integer quantity;
     @Column(name = "net_price")
     @Positive(message = "Net price must be greater than 0")
-    @NotNull
     private Long netPrice;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
