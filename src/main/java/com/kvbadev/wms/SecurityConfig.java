@@ -16,6 +16,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
@@ -43,5 +48,38 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(a -> {
+                            a.requestMatchers(HttpMethod.POST, "/users**").hasRole("ADMIN");
+                            a.requestMatchers(HttpMethod.PUT, "/users**").hasRole("ADMIN");
+                            a.requestMatchers(HttpMethod.PATCH, "/users/*").hasRole("ADMIN");
+                            a.requestMatchers(HttpMethod.DELETE, "/users/*").hasRole("ADMIN");
+                            a.requestMatchers(HttpMethod.GET, "/users**").hasRole("STAFF");
+                            a.requestMatchers(HttpMethod.GET, "/users/*").hasRole("STAFF");
+                            a.requestMatchers("/items**", "/parcels**", "/deliveries**").hasRole("USER");
+                            a.anyRequest().authenticated();
+                        }
+                )
+                .httpBasic(Customizer.withDefaults())
+                .cors(c -> {
+                    CorsConfiguration configuration = new CorsConfiguration();
+
+                    configuration.setAllowedOrigins(List.of("*"));
+                    configuration.setAllowedMethods(List.of("*"));
+                    configuration.setAllowedHeaders(List.of("*"));
+
+                    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                    source.registerCorsConfiguration("/**", configuration);
+
+                    c.configurationSource(source);
+                })
+                .sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        return http.build();
     }
 }

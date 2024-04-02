@@ -13,7 +13,7 @@ public class DeliveryPutRequest extends DeliveryDto{
     @JsonCreator
     @ConstructorProperties({"id","arrivalDate"})
     public DeliveryPutRequest(Integer id, @NotNull LocalDate arrivalDate) {
-        super(arrivalDate);
+        super(arrivalDate, false);
         this.id = id;
     }
 

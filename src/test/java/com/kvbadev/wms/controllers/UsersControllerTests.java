@@ -1,5 +1,6 @@
 package com.kvbadev.wms.controllers;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kvbadev.wms.data.security.UserRepository;
 import com.kvbadev.wms.models.exceptions.DuplicateResourceException;
@@ -40,10 +41,9 @@ public class UsersControllerTests {
     @MockBean
     private UserService userService;
     @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
     private UserViewModelAssembler userViewModelAssembler;
     private final User testUser = new User("fffff", "lllll", "mail@mail.com", "Pa$$20dkls..3");
+    private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules().setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
     @Test
     void findAllDeliveriesShouldReturnCollectionModelOfUserEntityModels() throws Exception {
@@ -87,13 +87,15 @@ public class UsersControllerTests {
     @Test
     void createUserWithCorrectBodyReturnsHttpCreated() throws Exception {
         User user = new User(testUser);
+        User userToPost = new User(testUser);
         user.setId(1);
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         when(userRepository.save(any())).thenReturn(user);
         when(userService.saveUser(any())).thenReturn(user);
 
 
         this.mockMvc.perform(post("/users")
-                        .content(objectMapper.writeValueAsString(user))
+                        .content(objectMapper.writeValueAsString(userToPost))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content()
@@ -105,8 +107,9 @@ public class UsersControllerTests {
     @Test
     void createUserWithSameEmailThrowsDuplicateException() throws Exception {
         when(userService.saveUser(any())).thenThrow(new DuplicateResourceException(User.class, "email", testUser.getEmail()));
+        User userToPost = new User(testUser);
         this.mockMvc.perform(post("/users")
-                        .content(objectMapper.writeValueAsString(testUser))
+                        .content(objectMapper.writeValueAsString(userToPost))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict());
     }
@@ -115,14 +118,12 @@ public class UsersControllerTests {
     void putUserWithExistingIdReturnsHttpOkAndLocationIsNotSet() throws Exception {
         User putRequest = new User("alsjdfka", "lfaksdl", "mail@mai2.com", "P@#safdasdfk003@.");
         User user = new User(testUser);
-        putRequest.setId(1);
-        user.setId(1);
         when(userService.updateUser(any())).thenReturn(user);
 
         objectMapper.updateValue(user, putRequest);
 
         when(userRepository.save(any())).thenReturn(user);
-        when(userRepository.findById(1)).thenReturn(Optional.of(user));
+        when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
 
 
         this.mockMvc.perform(put("/users")
@@ -142,7 +143,7 @@ public class UsersControllerTests {
             return user;
         });
         when(userRepository.save(any())).thenReturn(user);
-        when(userRepository.findById(1)).thenReturn(Optional.of(user));
+        when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
 
 
         this.mockMvc.perform(put("/users")
@@ -158,7 +159,6 @@ public class UsersControllerTests {
         User patchRequests = new User(testUser);
         patchRequests.setLastName("imminnea");
         User u = new User(testUser);
-        u.setId(1);
 
         when(userRepository.save(any())).thenAnswer(invocation -> {
             objectMapper.updateValue(u, patchRequests);

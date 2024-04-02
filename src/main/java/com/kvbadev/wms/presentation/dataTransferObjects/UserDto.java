@@ -2,16 +2,13 @@ package com.kvbadev.wms.presentation.dataTransferObjects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.kvbadev.wms.models.validation.Password;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.beans.ConstructorProperties;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public class UserDto {
     @NotBlank(message = "First name is mandatory")

@@ -7,7 +7,6 @@ import com.kvbadev.wms.data.warehouse.ParcelRepository;
 import com.kvbadev.wms.data.warehouse.ShelfRepository;
 import com.kvbadev.wms.models.exceptions.EntityNotFoundException;
 import com.kvbadev.wms.models.warehouse.Delivery;
-import com.kvbadev.wms.models.warehouse.Parcel;
 import com.kvbadev.wms.presentation.controllers.DeliveriesController;
 import com.kvbadev.wms.presentation.modelAssemblers.DeliveryModelAssembler;
 import org.junit.jupiter.api.Test;
@@ -20,11 +19,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -51,7 +48,7 @@ public class DeliveryControllerTests {
     private final LocalDate currentDate = LocalDate.now();
 
     public DeliveryControllerTests(@Autowired ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        this.objectMapper = objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL).findAndRegisterModules();
         System.out.println(currentDate);
     }
 
@@ -59,7 +56,7 @@ public class DeliveryControllerTests {
     void findAllDeliveriesShouldReturnCollectionModelOfDeliveryEntityModels() throws Exception {
         List<Delivery> Deliveries = new ArrayList<>(
                 List.of(
-                        new Delivery(currentDate)
+                        new Delivery(currentDate, false)
                 )
         );
         when(deliveryRepository.findAll()).thenReturn(Deliveries);
@@ -76,7 +73,7 @@ public class DeliveryControllerTests {
 
     @Test
     void findOneDeliveryShouldReturnDeliveryEntityModel() throws Exception {
-        Delivery Delivery = new Delivery(currentDate);
+        Delivery Delivery = new Delivery(currentDate, false);
         Delivery.setId(2);
 
         when(deliveryRepository.findById(2)).thenReturn(Optional.of(Delivery));
@@ -103,17 +100,18 @@ public class DeliveryControllerTests {
 
     @Test
     void createDeliveryWithCorrectBodyReturnsHttpCreated() throws Exception {
-        Delivery Delivery = new Delivery(currentDate);
+        Delivery delivery = new Delivery(currentDate, false);
 
         when(deliveryRepository.save(any())).thenAnswer(invocation -> {
-            Delivery.setId(1);
-            return Delivery;
+            delivery.setId(1);
+            return delivery;
         });
 
-        when(DeliveryModelAssembler.toModel(Delivery)).thenReturn(EntityModel.of(Delivery));
+        when(DeliveryModelAssembler.toModel(delivery)).thenReturn(EntityModel.of(delivery));
+        var x = objectMapper.writeValueAsString(delivery);
 
         this.mockMvc.perform(post("/deliveries")
-                        .content(objectMapper.writeValueAsString(Delivery))
+                        .content(objectMapper.writeValueAsString(delivery))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content()
@@ -125,17 +123,17 @@ public class DeliveryControllerTests {
     @Test
     void putDeliveryWithExistingIdReturnsHttpOkAndLocationIsNotSet() throws Exception {
         LocalDate newCurrent = LocalDate.now().plusDays(2);
-        Delivery putRequest = new Delivery(newCurrent);
-        Delivery Delivery = new Delivery(currentDate);
+        Delivery putRequest = new Delivery(newCurrent, false);
+        Delivery delivery = new Delivery(currentDate, false);
         putRequest.setId(1);
-        Delivery.setId(1);
+        delivery.setId(1);
 
-        objectMapper.updateValue(Delivery, putRequest);
+        objectMapper.updateValue(delivery, putRequest);
 
-        when(deliveryRepository.save(any())).thenReturn(Delivery);
-        when(deliveryRepository.findById(1)).thenReturn(Optional.of(Delivery));
+        when(deliveryRepository.save(any())).thenReturn(delivery);
+        when(deliveryRepository.findById(1)).thenReturn(Optional.of(delivery));
 
-        when(DeliveryModelAssembler.toModel(Delivery)).thenReturn(EntityModel.of(Delivery));
+        when(DeliveryModelAssembler.toModel(delivery)).thenReturn(EntityModel.of(delivery));
 
         this.mockMvc.perform(put("/deliveries")
                         .content(objectMapper.writeValueAsString(putRequest))
@@ -147,7 +145,7 @@ public class DeliveryControllerTests {
 
     @Test
     void putDeliveryWithoutIdReturnsHttpCreatedAndLocationIsSet() throws Exception {
-        Delivery Delivery = new Delivery(currentDate);
+        Delivery Delivery = new Delivery(currentDate, false);
 
         when(deliveryRepository.save(any())).thenAnswer(invocation -> {
             Delivery.setId(1);
@@ -168,8 +166,8 @@ public class DeliveryControllerTests {
     @Test
     void patchDeliveryReturnsHttpOk() throws Exception {
         LocalDate newCurrent = LocalDate.now().plusDays(2);
-        Delivery patchRequests = new Delivery(newCurrent);
-        Delivery delivery = new Delivery(currentDate);
+        Delivery patchRequests = new Delivery(newCurrent, false);
+        Delivery delivery = new Delivery(currentDate, false);
 
         when(deliveryRepository.save(any())).thenAnswer(invocation -> {
             objectMapper.updateValue(delivery, patchRequests);
@@ -200,7 +198,7 @@ public class DeliveryControllerTests {
 
     @Test
     void findByParcelIdReturnsOk() throws Exception {
-        Delivery delivery = new Delivery(currentDate);
+        Delivery delivery = new Delivery(currentDate, false);
 
         when(deliveryRepository.findByParcelId(1)).thenReturn(Optional.of(delivery));
         when(DeliveryModelAssembler.toModel(delivery)).thenReturn(EntityModel.of(delivery));

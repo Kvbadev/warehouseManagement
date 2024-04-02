@@ -12,15 +12,21 @@ public class DeliveryDto {
     @JsonFormat(pattern = "yyyy-MM-dd")
     @NotNull
     private final LocalDate arrivalDate;
+    @NotNull
+    private final Boolean hasArrived;
 
     @JsonCreator
-    @ConstructorProperties({"arrivalDate"})
-    public DeliveryDto(@NotNull LocalDate arrivalDate) {
+    @ConstructorProperties({"arrivalDate","hasArrived"})
+    public DeliveryDto(@NotNull LocalDate arrivalDate, @NotNull Boolean hasArrived) {
         this.arrivalDate = arrivalDate;
+        this.hasArrived = hasArrived;
     }
 
     public @NotNull LocalDate getArrivalDate() {
         return arrivalDate;
+    }
+    public @NotNull Boolean getHasArrived() {
+        return hasArrived;
     }
 
     @Override
@@ -34,4 +40,5 @@ public class DeliveryDto {
     public int hashCode() {
         return Objects.hash(arrivalDate);
     }
+
 }

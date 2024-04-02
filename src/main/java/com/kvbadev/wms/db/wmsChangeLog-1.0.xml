@@ -241,4 +241,12 @@
         <modifyDataType tableName="storage_rooms" columnName="name" newDataType="varchar(50)" />
         <addNotNullConstraint tableName="storage_rooms" columnName="name" />
     </changeSet>
+    <changeSet id="39" author="jakub_piasecki">
+        <addColumn tableName="deliveries">
+            <column name="has_arrived" type="bool" />
+        </addColumn>
+    </changeSet>
+    <changeSet id="40" author="jakub_piasecki">
+        <addNotNullConstraint tableName="deliveries" columnName="has_arrived" />
+    </changeSet>
 </databaseChangeLog>
