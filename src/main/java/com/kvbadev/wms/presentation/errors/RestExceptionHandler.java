@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -26,9 +27,18 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
-    @ExceptionHandler(value = EmptyRequestParamException.class)
-    public ResponseEntity<Object> handleEmptyRequestParam(EmptyRequestParamException ex) {
+    @ExceptionHandler(value = {EmptyRequestParamException.class})
+    public ResponseEntity<Object> handleEmptyRequestParam(Exception ex) {
         return buildResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+//
+//    @ExceptionHandler(value = InsufficientAuthenticationException.class)
+//    public ResponseEntity<Object> handleInsufficientAuthentication(InsufficientAuthenticationException ex) {
+//        return buildResponseEntity(HttpStatus.UNAUTHORIZED, ex.getMessage());
+//    }
+    @ExceptionHandler(value = {AccessDeniedException.class})
+    public ResponseEntity<Object> handleAccessDenied(AccessDeniedException ex) {
+        return buildResponseEntity(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 
     @ExceptionHandler(value = JsonMappingException.class)
@@ -49,7 +59,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleDuplicateResource(DuplicateResourceException ex) {
         return buildResponseEntity(HttpStatus.CONFLICT, ex.getMessage());
     }
-
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);

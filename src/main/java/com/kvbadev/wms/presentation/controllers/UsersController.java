@@ -6,6 +6,7 @@ import com.kvbadev.wms.data.security.UserRepository;
 import com.kvbadev.wms.models.exceptions.EntityNotFoundException;
 import com.kvbadev.wms.models.security.User;
 import com.kvbadev.wms.presentation.dataTransferObjects.UserDto;
+import com.kvbadev.wms.presentation.dataTransferObjects.UserLoginRequest;
 import com.kvbadev.wms.presentation.dataTransferObjects.UserPutRequest;
 import com.kvbadev.wms.presentation.dataTransferObjects.UserView;
 import com.kvbadev.wms.presentation.dataTransferObjects.mappers.UserMapper;
@@ -114,4 +115,8 @@ public class UsersController extends BaseController {
         }
     }
 
+//    @PostMapping("/login")
+//    public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginRequest loginRequest) {
+//
+//    }
 }

@@ -64,10 +64,6 @@
         </addColumn>
     </changeSet>
     <changeSet id="3" author="jakub_piasecki">
-        <loadData tableName="parcels" file="src/main/java/com/kvbadev/wms/db/parcels.csv" />
-        <loadData tableName="items" file="src/main/java/com/kvbadev/wms/db/items.csv" />
-    </changeSet>
-    <changeSet id="4" author="jakub_piasecki">
         <createTable tableName="deliveries">
             <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false" />
@@ -76,22 +72,13 @@
         </createTable>
         <addAutoIncrement tableName="deliveries" columnName="id" />
     </changeSet>
-    <changeSet id="5" author="jakub_piasecki">
+    <changeSet id="4" author="jakub_piasecki">
         <createTable tableName="delivery_items">
             <column name="item_id" type="int"/>
             <column name="delivery_id" type="int" />
         </createTable>
     </changeSet>
-    <changeSet id="6" author="jakub_piasecki">
-        <loadData tableName="items" file="src/main/java/com/kvbadev/wms/db/items.csv" />
-    </changeSet>
-    <changeSet id="7" author="jakub_piasecki">
-        <loadData tableName="deliveries" file="src/main/java/com/kvbadev/wms/db/deliveries.csv" />
-    </changeSet>
-    <changeSet id="8" author="jakub_piasecki">
-        <loadData tableName="delivery_items" file="src/main/java/com/kvbadev/wms/db/delivery_items.csv" />
-    </changeSet>
-    <changeSet id="9" author="jakub_piasecki">
+    <changeSet id="5" author="jakub_piasecki">
         <createTable tableName="privileges">
             <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false" />
@@ -100,7 +87,7 @@
         </createTable>
         <addAutoIncrement tableName="privileges" columnName="id" />
     </changeSet>
-    <changeSet id="10" author="jakub_piasecki">
+    <changeSet id="6" author="jakub_piasecki">
         <createTable tableName="roles">
             <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false" />
@@ -109,7 +96,7 @@
         </createTable>
         <addAutoIncrement tableName="roles" columnName="id" />
     </changeSet>
-    <changeSet id="11" author="jakub_piasecki">
+    <changeSet id="7" author="jakub_piasecki">
         <createTable tableName="users">
             <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false" />
@@ -122,7 +109,7 @@
         </createTable>
         <addAutoIncrement tableName="users" columnName="id" />
     </changeSet>
-    <changeSet id="12" author="jakub_piasecki">
+    <changeSet id="8" author="jakub_piasecki">
         <comment>A many-to-many join table between roles and privileges</comment>
         <createTable tableName="roles_privileges">
             <column name="role_id" type="int">
@@ -134,7 +121,7 @@
         </createTable>
         <addPrimaryKey tableName="roles_privileges" columnNames="role_id,privilege_id" />
     </changeSet>
-    <changeSet id="13" author="jakub_piasecki">
+    <changeSet id="9" author="jakub_piasecki">
         <comment>A many-to-many join table between users and roles</comment>
         <createTable tableName="users_roles">
             <column name="user_id" type="int">
@@ -146,22 +133,7 @@
         </createTable>
         <addPrimaryKey tableName="users_roles" columnNames="user_id,role_id" />
     </changeSet>
-    <changeSet id="14" author="jakub_piasecki">
-        <loadData tableName="privileges" file="src/main/java/com/kvbadev/wms/db/privileges.csv" />
-    </changeSet>
-    <changeSet id="15" author="jakub_piasecki">
-        <loadData tableName="roles" file="src/main/java/com/kvbadev/wms/db/roles.csv" />
-    </changeSet>
-    <changeSet id="16" author="jakub_piasecki" runOnChange="true">
-        <loadData tableName="users" file="src/main/java/com/kvbadev/wms/db/users.csv"/>
-    </changeSet>
-    <changeSet id="17" author="jakub_piasecki" runOnChange="true">
-        <loadData tableName="roles_privileges" file="src/main/java/com/kvbadev/wms/db/roles_privileges.csv" />
-    </changeSet>
-    <changeSet id="18" author="jakub_piasecki" runOnChange="true">
-        <loadData tableName="users_roles" file="src/main/java/com/kvbadev/wms/db/users_roles.csv" />
-    </changeSet>
-    <changeSet id="19" author="jakub_piasecki">
+    <changeSet id="10" author="jakub_piasecki">
         <createTable tableName="gates">
             <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false"/>
@@ -169,84 +141,84 @@
             <column name="name" type="varchar(255)"/>
         </createTable>
     </changeSet>
-    <changeSet id="20" author="jakub_piasecki">
+    <changeSet id="11" author="jakub_piasecki">
         <dropTable tableName="delivery_items"/>
     </changeSet>
-    <changeSet id="21" author="jakub_piasecki">
+    <changeSet id="12" author="jakub_piasecki">
         <addColumn tableName="items">
             <column name="delivery_id" type="int" >
                 <constraints foreignKeyName="FK_Deliveries_Items" references="deliveries(id)"/>
             </column>
         </addColumn>
     </changeSet>
-    <changeSet id="22" author="jakubpiasecki">
+    <changeSet id="13" author="jakubpiasecki">
         <dropColumn tableName="items">
             <column name="delivery_id"/>
         </dropColumn>
     </changeSet>
-    <changeSet id="23" author="jakub_piasecki">
+    <changeSet id="14" author="jakub_piasecki">
         <addColumn tableName="parcels">
             <column name="delivery_id" type="int" >
                 <constraints foreignKeyName="FK_Deliveries_Parcels" references="deliveries(id)"/>
             </column>
         </addColumn>
     </changeSet>
-    <changeSet id="24" author="jakub_piasecki">
+    <changeSet id="15" author="jakub_piasecki">
         <modifyDataType tableName="items" columnName="name" newDataType="varchar(50)" />
         <addNotNullConstraint tableName="items" columnName="name" />
     </changeSet>
-    <changeSet id="25" author="jakub_piasecki">
+    <changeSet id="16" author="jakub_piasecki">
         <addNotNullConstraint tableName="items" columnName="quantity" />
     </changeSet>
-    <changeSet id="26" author="jakub_piasecki">
+    <changeSet id="17" author="jakub_piasecki">
         <addNotNullConstraint tableName="items" columnName="net_price" />
     </changeSet>
-    <changeSet id="27" author="jakub_piasecki">
+    <changeSet id="18" author="jakub_piasecki">
         <modifyDataType tableName="parcels" columnName="name" newDataType="varchar(50)" />
         <addNotNullConstraint tableName="parcels" columnName="name" />
     </changeSet>
-    <changeSet id="28" author="jakub_piasecki">
+    <changeSet id="19" author="jakub_piasecki">
         <addNotNullConstraint tableName="parcels" columnName="weight" />
     </changeSet>
-    <changeSet id="29" author="jakub_piasecki">
+    <changeSet id="20" author="jakub_piasecki">
         <addNotNullConstraint tableName="deliveries" columnName="arrival_date" />
     </changeSet>
-    <changeSet id="30" author="jakub_piasecki">
+    <changeSet id="21" author="jakub_piasecki">
         <addNotNullConstraint tableName="items" columnName="id" />
     </changeSet>
-    <changeSet id="31" author="jakub_piasecki">
+    <changeSet id="22" author="jakub_piasecki">
         <addNotNullConstraint tableName="parcels" columnName="id" />
     </changeSet>
-    <changeSet id="32" author="jakub_piasecki">
+    <changeSet id="23" author="jakub_piasecki">
         <addNotNullConstraint tableName="deliveries" columnName="id" />
     </changeSet>
-    <changeSet id="33" author="jakub_piasecki">
+    <changeSet id="24" author="jakub_piasecki">
         <addNotNullConstraint tableName="shelves" columnName="id" />
     </changeSet>
-    <changeSet id="34" author="jakub_piasecki">
+    <changeSet id="25" author="jakub_piasecki">
         <addNotNullConstraint tableName="racks" columnName="id" />
     </changeSet>
-    <changeSet id="35" author="jakub_piasecki">
+    <changeSet id="26" author="jakub_piasecki">
         <addNotNullConstraint tableName="storage_rooms" columnName="id" />
     </changeSet>
-    <changeSet id="36" author="jakub_piasecki">
+    <changeSet id="27" author="jakub_piasecki">
         <modifyDataType tableName="shelves" columnName="name" newDataType="varchar(50)" />
         <addNotNullConstraint tableName="shelves" columnName="name" />
     </changeSet>
-    <changeSet id="37" author="jakub_piasecki">
+    <changeSet id="28" author="jakub_piasecki">
         <modifyDataType tableName="racks" columnName="name" newDataType="varchar(50)" />
         <addNotNullConstraint tableName="racks" columnName="name" />
     </changeSet>
-    <changeSet id="38" author="jakub_piasecki">
+    <changeSet id="29" author="jakub_piasecki">
         <modifyDataType tableName="storage_rooms" columnName="name" newDataType="varchar(50)" />
         <addNotNullConstraint tableName="storage_rooms" columnName="name" />
     </changeSet>
-    <changeSet id="39" author="jakub_piasecki">
+    <changeSet id="30" author="jakub_piasecki">
         <addColumn tableName="deliveries">
             <column name="has_arrived" type="bool" />
         </addColumn>
     </changeSet>
-    <changeSet id="40" author="jakub_piasecki">
+    <changeSet id="31" author="jakub_piasecki">
         <addNotNullConstraint tableName="deliveries" columnName="has_arrived" />
     </changeSet>
 </databaseChangeLog>
