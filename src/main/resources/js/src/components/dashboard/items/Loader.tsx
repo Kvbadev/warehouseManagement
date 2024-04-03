@@ -1,4 +1,4 @@
-export default function ItemsLoader() {
+export default function Loader() {
   return (
     <div className="flex justify-center w-full h-full items-center">
       <svg

@@ -1,34 +1,50 @@
 import { useState } from "react";
-import { User } from "../../models/user";
 import FormInput from "./FormInput";
+import { ApiClient } from "../../api/apiClient";
+import { toast } from "react-toastify";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-export default function SignInForm(){
-    
+export default function SignInForm() {
+
+    const api = new ApiClient();
+    const { setToken } = useAuth();
+    const navigate = useNavigate();
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = event.target;
-        setUser((prevUser: User) => ({...prevUser, [name]: value}));
+        const { name, value } = event.target;
+        setLoginData(data => ({
+            ...data, [name]: value
+        }))
     }
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        console.log(user);
+
+        api.login(loginData).then((token) => {
+            if (token) { 
+                setToken(token) 
+                navigate('/dashboard')
+            };
+        })
+            .catch((err: Error) => {
+                toast(err.message, {
+                    type: "error",
+                });
+            });
     }
 
-    const [user, setUser] = useState<User>({
-        firstName: '',
-        lastName: '',
+    const [loginData, setLoginData] = useState({
         email: '',
         password: ''
     });
 
     return (
         <form onSubmit={handleSubmit} className="m-4 w-64 flex flex-wrap bg-gray-50 p-16 box-content">
-            <FormInput name="firstName" displayName="First Name" handleChange={handleChange} />
-            <FormInput name="lastName" displayName="Last Name" handleChange={handleChange} />
-            <FormInput name="email" handleChange={handleChange} />
-            <FormInput name="password" handleChange={handleChange} />
+            <FormInput name="email" displayName="Email" handleChange={handleChange} />
+            <FormInput name="password" displayName="Password" handleChange={handleChange} />
 
-           <button type="submit" className="bg-green-500 w-24 h-12 rounded-lg mt-6 text-lg font-semibold">Submit</button>
+            <button type="submit" className="bg-green-600 w-24 h-12 text-white rounded-lg mt-6 text-xl font-semibold hover:bg-green-400 transition-all">Submit</button>
         </form>
     )
 }
