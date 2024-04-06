@@ -1,19 +1,21 @@
-import { useContext, useEffect, useState } from "react";
-import { ApiClient } from "../../api/apiClient";
+import { useEffect, useState } from "react";
+import { api } from "../../api/apiClient";
 import { toast } from "react-toastify";
 import Item from "../../models/item";
 import { useAuth } from "../../context/AuthContext";
-import Home from "./Home";
 import Sidebar from "./Sidebar";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Delivery from "../../models/delivery";
+import { User } from "../../models/user";
 
-export type DashboardContextType = { items: Item[], deliveries: Delivery[] };
+export type DashboardContextType = { items: Item[], deliveries: Delivery[], users: User[] };
 
 export function Dashboard() {
-  const api = new ApiClient();
+
   const [items, setItems] = useState([] as Item[]);
   const [deliveries, setDeliveries] = useState([] as Delivery[]);
+  const [users, setUsers] = useState([] as User[]);
+
   const { token } = useAuth();
 
   useEffect(() => {
@@ -25,24 +27,34 @@ export function Dashboard() {
           setItems(res);
         })
         .catch((err: Error) => {
-          toast(err.message, {
+          toast("getItems " + err.message, {
             type: "error",
           });
         });
     }
     const getLimitDeliveries = () => {
       api.getDeliveries()
-      .then(res => {
-        setDeliveries(res);
-      })
-      .catch((err: Error) => {
-        toast(err.message, {
-          type: 'error'
+        .then(res => {
+          setDeliveries(res);
         })
-      });
+        .catch((err: Error) => {
+          toast("getDeliveries " + err.message, {
+            type: 'error'
+          })
+        });
+    }
+    const getUsers = () => {
+      api.getUsers().then(u => {
+        setUsers(u);
+      }).catch((err: Error) => {
+        toast("getUsers " + err.message, {
+          type: "error",
+        });
+      })
     }
     getLimitItems();
     getLimitDeliveries();
+    getUsers();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
@@ -55,7 +67,7 @@ export function Dashboard() {
       {token &&
         <>
           <Sidebar />
-          <Outlet context={{ items, deliveries } satisfies DashboardContextType} />
+          <Outlet context={{ items, deliveries, users } satisfies DashboardContextType} />
         </>
       }
     </div>

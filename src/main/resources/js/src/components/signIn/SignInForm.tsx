@@ -1,13 +1,12 @@
 import { useState } from "react";
 import FormInput from "./FormInput";
-import { ApiClient } from "../../api/apiClient";
+import { api } from "../../api/apiClient";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export default function SignInForm() {
 
-    const api = new ApiClient();
     const { setToken } = useAuth();
     const navigate = useNavigate();
 
@@ -23,8 +22,9 @@ export default function SignInForm() {
 
         api.login(loginData).then((token) => {
             if (token) { 
-                setToken(token) 
-                navigate('/dashboard')
+                setToken(token);
+                api.setAuthorizationToken(token)
+                navigate('/dashboard/home');
             };
         })
             .catch((err: Error) => {

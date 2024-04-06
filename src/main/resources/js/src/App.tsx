@@ -8,6 +8,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/ReactToastify.css';
 import { useAuth, AuthProvider } from './context/AuthContext';
 import Home from './components/dashboard/Home';
+import Users from './components/dashboard/Users';
 
 function App() {
   const authContext = useAuth();
@@ -19,7 +20,7 @@ function App() {
           <Routes>
             <Route path='dashboard' element={<Dashboard />}>
               <Route path='home' element={<Home />} />
-              <Route path='users'/>
+              <Route path='users' element={<Users />}/>
               <Route path='users/:id'/>
               <Route path='items'/>
               <Route path='items/:id'/>

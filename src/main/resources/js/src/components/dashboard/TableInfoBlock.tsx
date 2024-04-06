@@ -1,6 +1,6 @@
-import { Link, useOutletContext } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Item from "../../models/item";
-import Loader from "./items/Loader";
+import Loader from "./Loader";
 import Delivery from "../../models/delivery";
 
 export function TableItemInfoBlock({ name, items }: { name: string, items: Item[] }) {

@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { instance } from "../api/apiClient";
 
 const AuthContext = createContext({} as {token: string, setToken: (newToken: string) => void})
 

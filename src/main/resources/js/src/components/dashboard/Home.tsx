@@ -1,11 +1,11 @@
 import { useOutletContext } from "react-router-dom";
-import Item from "../../models/item";
 import SimpleInfoBlock from "./SimpleInfoBlock";
 import { TableItemInfoBlock, TableDeliveryInfoBlock } from "./TableInfoBlock";
 import { DashboardContextType } from "./Dashboard";
 
 export default function Home() {
     const { items, deliveries } = useOutletContext<DashboardContextType>()
+
     return (
         <div className="max-w-6xl overflow-hidden mx-auto my-0 w-4/5 p-4">
             <div className="flex flex-col pb-2">
@@ -17,7 +17,7 @@ export default function Home() {
                     <SimpleInfoBlock digit="553" label="Items in stock" link="../items" linkLabel="Show all" />
                     <SimpleInfoBlock digit="33" label="New deliveries" />
                     <SimpleInfoBlock digit="4" label="Delayed deliveries" link="../deliveries?delayed=true" linkLabel="Resolve all" isNegative />
-                    <SimpleInfoBlock digit="$23.4k" label="Total Worth" />
+                    <SimpleInfoBlock digit={'$22.3k'} label="Total Worth" />
                 </div>
                 <div className="flex flex-row gap-4 w-full">
                     <TableItemInfoBlock name="Items" items={items} />

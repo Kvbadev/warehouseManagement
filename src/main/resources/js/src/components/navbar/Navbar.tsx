@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 interface navItem {
   id: number;
@@ -7,9 +8,10 @@ interface navItem {
 }
 export const navbarHeight = "48px";
 export function Navbar() {
+  const { token } = useAuth();
   const navItems: Array<navItem> = [
     { id: 1, text: "About", slug: "about-us" },
-    { id: 2, text: "Sign in", slug: "sign-in" },
+    token ? { id: 2, text: 'Profile', slug: 'profile' } : { id: 2, text: "Sign in", slug: "sign-in" },
   ];
 
   return (
