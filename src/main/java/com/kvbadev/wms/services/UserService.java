@@ -1,7 +1,5 @@
 package com.kvbadev.wms.services;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kvbadev.wms.data.security.RoleRepository;
 import com.kvbadev.wms.data.security.UserRepository;
 import com.kvbadev.wms.models.exceptions.DuplicateResourceException;
@@ -12,8 +10,6 @@ import com.kvbadev.wms.presentation.dataTransferObjects.UserDto;
 import com.kvbadev.wms.presentation.dataTransferObjects.UserPutRequest;
 import com.kvbadev.wms.presentation.dataTransferObjects.mappers.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,13 +28,13 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
     private final UserMapper userMapper = UserMapper.INSTANCE;
 
-    public void addRolesByRolesId(User user, List<Integer> rolesId) {
-        for(int id : rolesId) {
-            roleRepository.findById(id)
+    public void addRolesByRoleNames(User user, List<String> roleNames) {
+        for(String name : roleNames) {
+            roleRepository.findByName(name)
                     .ifPresentOrElse(
                             user::addRole,
                             () -> {
-                                throw new EntityNotFoundException(Role.class, id);
+                                throw new EntityNotFoundException(Role.class, name, "name");
                             }
                     );
         }
@@ -60,8 +56,8 @@ public class UserService {
         newUser.setEnabled(enabled);
 
         //add roles if any exist
-        if (user.getRolesId() != null) {
-            addRolesByRolesId(newUser, user.getRolesId());
+        if (user.getRoleNames() != null) {
+            addRolesByRoleNames(newUser, user.getRoleNames());
         }
         return userRepository.save(newUser);
     }
@@ -73,8 +69,8 @@ public class UserService {
         userMapper.update(user, userRequest);
 
         //update roles
-        if (updateRequest.getRolesId() != null) {
-            addRolesByRolesId(user, updateRequest.getRolesId());
+        if (updateRequest.getRoleNames() != null) {
+            addRolesByRoleNames(user, updateRequest.getRoleNames());
         }
         return userRepository.save(user);
     }
@@ -89,8 +85,8 @@ public class UserService {
         User user = userMapper.userPutToUser(updateRequest);
 
         //add roles if any exist
-        if (updateRequest.getRolesId() != null) {
-            addRolesByRolesId(user, updateRequest.getRolesId());
+        if (updateRequest.getRoleNames() != null) {
+            addRolesByRoleNames(user, updateRequest.getRoleNames());
         }
 
         return userRepository.save(user);

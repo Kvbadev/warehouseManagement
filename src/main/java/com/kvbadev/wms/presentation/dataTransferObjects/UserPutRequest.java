@@ -14,9 +14,9 @@ public class UserPutRequest extends UserDto{
     }
 
     @JsonCreator
-    @ConstructorProperties({"id","firstName","lastName","email","password","rolesId"})
-    public UserPutRequest(Integer id, String firstName, String lastName, String email, String password, List<Integer> rolesId) {
-        super(firstName, lastName, email, password, rolesId);
+    @ConstructorProperties({"id","firstName","lastName","email","password","roleNames"})
+    public UserPutRequest(Integer id, String firstName, String lastName, String email, String password, List<String> roleNames) {
+        super(firstName, lastName, email, password, roleNames);
         this.id = id;
     }
 

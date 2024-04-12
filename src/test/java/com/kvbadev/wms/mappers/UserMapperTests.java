@@ -41,7 +41,7 @@ public class UserMapperTests {
     }
     @Test
     public void userDtoToUserShouldIgnoreParcelAndId() {
-        UserDto userUpdate = new UserDto("first","lastname","email","password", List.of(1,2));
+        UserDto userUpdate = new UserDto("first","lastname","email","password", List.of("ROLE_ADMIN"));
         User user = userMapper.userDtoToUser(userUpdate);
 
         assert user.getRoles().isEmpty();
@@ -50,7 +50,7 @@ public class UserMapperTests {
 
     @Test
     public void userPutToUserShouldIgnoreParcelAndUpdateId() {
-        UserPutRequest userUpdate = new UserPutRequest(1, "first","lastname","email","password", List.of(1,2));
+        UserPutRequest userUpdate = new UserPutRequest(1, "first","lastname","email","password", List.of("ROLE_USER"));
         User user = userMapper.userPutToUser(userUpdate);
 
         assert user.getRoles().isEmpty();

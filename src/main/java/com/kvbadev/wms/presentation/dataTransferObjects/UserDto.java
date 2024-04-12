@@ -22,16 +22,16 @@ public class UserDto {
     private final String email;
     @Password
     private final String password;
-    private final List<Integer> rolesId;
+    private final List<String> roleNames;
 
     @JsonCreator
-    @ConstructorProperties({"firstName","lastName","email","password","rolesId"})
-    public UserDto(String firstName, String lastName, String email, String password, List<Integer> rolesId){
+    @ConstructorProperties({"firstName","lastName","email","password","roleNames"})
+    public UserDto(String firstName, String lastName, String email, String password, List<String> roleNames){
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.rolesId = rolesId;
+        this.roleNames = roleNames;
     }
 
     public String getFirstName() {
@@ -50,19 +50,19 @@ public class UserDto {
         return password;
     }
 
-    public List<Integer> getRolesId() {
-        return rolesId;
+    public List<String> getRoleNames() {
+        return roleNames;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof UserDto userDto)) return false;
-        return Objects.equals(firstName, userDto.firstName) && Objects.equals(lastName, userDto.lastName) && Objects.equals(email, userDto.email) && Objects.equals(password, userDto.password) && Objects.equals(rolesId, userDto.rolesId);
+        return Objects.equals(firstName, userDto.firstName) && Objects.equals(lastName, userDto.lastName) && Objects.equals(email, userDto.email) && Objects.equals(password, userDto.password) && Objects.equals(roleNames, userDto.roleNames);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, email, password, rolesId);
+        return Objects.hash(firstName, lastName, email, password, roleNames);
     }
 }
