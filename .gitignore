@@ -57,6 +57,4 @@ yarn-debug.log*
 yarn-error.log*
 
 
-src/main/resources/application.properties
 application.properties
-src/main/resources/application.properties

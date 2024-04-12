@@ -13,9 +13,7 @@ export const AuthProvider = ({children}: {children: any}) => {
     useEffect(() => {
         if (token) {
             localStorage.setItem('token', token);
-        } else {
-            localStorage.removeItem('token');
-        }
+        } 
     }, [token])
 
     const contextValue = useMemo(

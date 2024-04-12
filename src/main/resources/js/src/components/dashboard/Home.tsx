@@ -7,7 +7,7 @@ export default function Home() {
     const { items, deliveries } = useOutletContext<DashboardContextType>()
 
     return (
-        <div className="max-w-6xl overflow-hidden mx-auto my-0 w-4/5 p-4">
+        <div className="max-w-6xl mx-auto my-0 w-4/5 p-4">
             <div className="flex flex-col pb-2">
                 <h1 className="text-3xl font-lato">Dashboard</h1>
                 <p className="text-lg font-lato text-red-800">Welcome username</p>

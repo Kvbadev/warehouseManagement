@@ -7,6 +7,7 @@ import Sidebar from "./Sidebar";
 import { Outlet } from "react-router-dom";
 import Delivery from "../../models/delivery";
 import { User } from "../../models/user";
+import { AxiosError } from "axios";
 
 export type DashboardContextType = { items: Item[], deliveries: Delivery[], users: User[] };
 
@@ -27,9 +28,9 @@ export function Dashboard() {
           setItems(res);
         })
         .catch((err: Error) => {
-          toast("getItems " + err.message, {
-            type: "error",
-          });
+          toast(err.message, {
+            type: 'error'
+          })
         });
     }
     const getLimitDeliveries = () => {
@@ -38,7 +39,7 @@ export function Dashboard() {
           setDeliveries(res);
         })
         .catch((err: Error) => {
-          toast("getDeliveries " + err.message, {
+          toast(err.message, {
             type: 'error'
           })
         });
@@ -47,7 +48,7 @@ export function Dashboard() {
       api.getUsers().then(u => {
         setUsers(u);
       }).catch((err: Error) => {
-        toast("getUsers " + err.message, {
+        toast(err.message, {
           type: "error",
         });
       })
@@ -63,7 +64,7 @@ export function Dashboard() {
 
 
   return (
-    <div className="w-screen max-h-[calc(100vh-3rem)] overflow-hidden flex gap-4">
+    <div className="w-screen max-h-[calc(100vh-3rem)] overflow-hidden flex [&>*:nth-child(2)]:px-4">
       {token &&
         <>
           <Sidebar />

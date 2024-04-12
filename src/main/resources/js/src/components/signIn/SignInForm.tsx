@@ -4,11 +4,13 @@ import { api } from "../../api/apiClient";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import Loader from "../dashboard/Loader";
 
 export default function SignInForm() {
 
     const { setToken } = useAuth();
     const navigate = useNavigate();
+    const [submitting, setSubmitting] = useState(false);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -19,7 +21,7 @@ export default function SignInForm() {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-
+        setSubmitting(true)
         api.login(loginData).then((token) => {
             if (token) { 
                 setToken(token);
@@ -31,7 +33,8 @@ export default function SignInForm() {
                 toast(err.message, {
                     type: "error",
                 });
-            });
+            })
+            .finally(() => setSubmitting(false))
     }
 
     const [loginData, setLoginData] = useState({
@@ -44,7 +47,7 @@ export default function SignInForm() {
             <FormInput name="email" displayName="Email" handleChange={handleChange} />
             <FormInput name="password" displayName="Password" handleChange={handleChange} />
 
-            <button type="submit" className="bg-green-600 w-24 h-12 text-white rounded-lg mt-6 text-xl font-semibold hover:bg-green-400 transition-all">Submit</button>
+            <button type="submit" className="bg-green-600 w-24 h-12 text-white rounded-lg mt-6 text-xl font-semibold hover:bg-green-400 transition-all">{submitting ? <Loader small /> : 'Submit'}</button>
         </form>
     )
 }
