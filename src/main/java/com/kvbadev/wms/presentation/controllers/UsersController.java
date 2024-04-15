@@ -1,12 +1,9 @@
 package com.kvbadev.wms.presentation.controllers;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kvbadev.wms.data.security.UserRepository;
 import com.kvbadev.wms.models.exceptions.EntityNotFoundException;
 import com.kvbadev.wms.models.security.User;
 import com.kvbadev.wms.presentation.dataTransferObjects.UserDto;
-import com.kvbadev.wms.presentation.dataTransferObjects.UserLoginRequest;
 import com.kvbadev.wms.presentation.dataTransferObjects.UserPutRequest;
 import com.kvbadev.wms.presentation.dataTransferObjects.UserView;
 import com.kvbadev.wms.presentation.dataTransferObjects.mappers.UserMapper;
@@ -21,9 +18,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -62,6 +58,34 @@ public class UsersController extends BaseController {
                         .map(userMapper::userToUserView)
                         .map(userViewModelAssembler::toModel)
                         .orElseThrow(() -> new EntityNotFoundException(User.class, id))
+        );
+    }
+
+    @RequestMapping(params = {"email"}, method = RequestMethod.GET, produces = HAL_JSON_VALUE)
+    public ResponseEntity<EntityModel<UserView>> getUserBy(
+            @RequestParam("email") String email
+    ) {
+        return ResponseEntity.ok(
+                userRepository
+                        .findByEmail(email)
+                        .map(userMapper::userToUserView)
+                        .map(userViewModelAssembler::toModel)
+                        .orElseThrow(() -> new EntityNotFoundException(User.class, "email", email))
+        );
+    }
+    @GetMapping("/current")
+    public ResponseEntity<EntityModel<UserView>> getUserByJwtToken() {
+        Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
+        Object currentUserEmail = currentAuthentication.getPrincipal();
+        if(!currentUserEmail.getClass().equals(String.class)) {
+            throw new RuntimeException("Current user email was not a string");
+        }
+        return ResponseEntity.ok(
+                userRepository
+                        .findByEmail((String) currentUserEmail)
+                        .map(userMapper::userToUserView)
+                        .map(userViewModelAssembler::toModel)
+                        .orElseThrow(() -> new EntityNotFoundException(User.class, "email", (String) currentUserEmail))
         );
     }
 
