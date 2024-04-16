@@ -11,6 +11,9 @@ module.exports = {
       }
     },
   },
+  safelist: [
+    'h-[calc(100%-48px)]'
+  ],
   plugins: [],
 }
 

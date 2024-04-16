@@ -35,8 +35,13 @@ export default function UserEdit() {
 
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
+        let { name, value }: {name: any, value: any} = event.target;
+        
         console.log(name, value);
+
+        if(name === 'roleNames') {
+            value = value.split(',');
+        }
 
         setUser((data: any) => ({
             ...data, [name]: value
@@ -55,8 +60,10 @@ export default function UserEdit() {
             lastName: user.lastName,
             email: user.email,
             roleNames: user.roleNames,
-            password: user.password
         };
+        if(user.password) {
+            userBody.password = user.password
+        }
 
         api.patchUser(userBody, user.id).then((_response) => {
             toast('Updated successfully', {type: 'success'});
@@ -84,8 +91,8 @@ export default function UserEdit() {
                     <FormInput errors={validationErrors} name="firstName" displayName="Firstname" handleChange={handleChange} style="border-gray-300 h-[3vw]" value={user?.firstName} />
                     <FormInput errors={validationErrors} name="lastName" displayName="Lastname" handleChange={handleChange} style="border-gray-300 h-[3vw]" value={user?.lastName} />
                     <FormInput errors={validationErrors} name="email" displayName="Email" handleChange={handleChange} style="border-gray-300 h-[3vw]" value={user?.email} />
-                    <FormInput errors={validationErrors} name="roles" displayName="Roles" handleChange={handleChange} style="border-gray-300 h-[3vw]" value={user?.roleNames?.join(',')} />
-                    <FormInput errors={validationErrors} name="password" displayName="Password" handleChange={handleChange} style="border-gray-300 h-[3vw]" value={user.password} />
+                    <FormInput errors={validationErrors} name="roleNames" displayName="Roles" handleChange={handleChange} style="border-gray-300 h-[3vw]" value={user?.roleNames?.join(',')} />
+                    <FormInput errors={validationErrors} name="password" displayName="New password" handleChange={handleChange} style="border-gray-300 h-[3vw]" value={user.password} />
                     <div className="flex px-4 justify-between w-full">
                         <button type="submit" className="bg-green-500 text-white font-lato text-xl w-[8vw] rounded-xl grid place-content-center">{submitting ? <Loader small />:'Submit'}</button>
                         <Link to="../users" className="bg-gray-500 text-white font-lato text-xl w-[8vw] rounded-xl text-center grid place-content-center">Cancel</Link>

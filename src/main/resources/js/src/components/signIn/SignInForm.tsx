@@ -5,10 +5,14 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Loader from "../dashboard/Loader";
+import { useLoggedUser } from "../../context/LoggedUserContext";
+import { User } from "../../models/user";
+import { AxiosError } from "axios";
 
 export default function SignInForm() {
 
     const { setToken } = useAuth();
+    const { setLoggedUser, loggedUser } = useLoggedUser();
     const navigate = useNavigate();
     const [submitting, setSubmitting] = useState(false);
 
@@ -22,12 +26,24 @@ export default function SignInForm() {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         setSubmitting(true)
-        api.login(loginData).then((token) => {
-            if (token) { 
-                setToken(token);
-                api.setAuthorizationToken(token)
-                navigate('/dashboard/home');
-            };
+        api.login(loginData).then(async (token) => {
+            if(!token) return
+
+            setToken(token);
+            api.setAuthorizationToken(token)
+
+            await api.getCurrentUser()
+                .then(user => {
+                    setLoggedUser({
+                        ...user
+                    })
+                    localStorage.setItem('loggedUser', JSON.stringify(user))
+                }).catch((err: AxiosError) => {
+                    toast(err.message, {
+                        type: "error",
+                    });
+                })
+            navigate('/dashboard/home');
         })
             .catch((err: Error) => {
                 toast(err.message, {

@@ -42,15 +42,23 @@ class ApiClient {
     async getDeliveries(): Promise<Delivery[]> {
         const response = await this.instance.get('/deliveries/latest')
         const data = response.data;
-        console.log(data);
 
         return data['_embedded']['deliveryList']
     }
     async getUsers(): Promise<User[]> {
         const response = await this.instance.get('/users')
         const data = response.data
-        console.log(data);
         return data['_embedded']['userList'];
+    }
+    async getUser(userId: number): Promise<User> {
+        const response = await this.instance.get('/users/'+userId)
+        const data = response.data
+        return data
+    }
+    async getCurrentUser(): Promise<User> {
+        const response = await this.instance.get('/users/current')
+        const data = response.data
+        return data
     }
     async patchUser(user: Partial<User>, userId: number) {
         return await this.instance.patch('/users/' + userId, user);
