@@ -37,8 +37,6 @@ export default function UserEdit() {
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         let { name, value }: {name: any, value: any} = event.target;
         
-        console.log(name, value);
-
         if(name === 'roleNames') {
             value = value.split(',');
         }
@@ -67,6 +65,7 @@ export default function UserEdit() {
 
         api.patchUser(userBody, user.id).then((_response) => {
             toast('Updated successfully', {type: 'success'});
+            navigate('../users')
         }).catch((err: AxiosError) => {
             if(err.response?.status === 400 && err.message == 'Validation error') {
 
