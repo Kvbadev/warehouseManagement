@@ -1,9 +1,40 @@
 import Loader from "../Loader";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { DashboardContextType } from "../Dashboard";
 import CustomPieChart from "../../charts/piechart";
 import { navbarHeight } from "../../navbar/Navbar";
 import chartData from "../../../models/chartData";
+import { FaSort, FaSortAlphaDown, FaSortAlphaUp, FaSortDown, FaSortUp } from "react-icons/fa";
+import { useState } from "react";
+
+export function Sorter({list, property}: {list: any[], property: string}) {
+    const [sortState, setSortState] = useState('UNSORTED' as 'UNSORTED'|'ASCENDING'|'DESCENDING')
+    const handleClick = () => {
+        switch(sortState) {
+            case 'UNSORTED':
+                setSortState('ASCENDING')
+                break
+            case 'ASCENDING':
+                setSortState('DESCENDING')
+                break
+            default:
+                setSortState('UNSORTED')
+                break
+        }
+
+        list.sort((a, b) => a[property]-b[property])
+    }
+    return (
+        <span onClick={handleClick} className="cursor-pointer">
+            {sortState === 'UNSORTED' ?
+                <FaSort size={20} className="relative top-[2px] pr-2" /> : 
+                (sortState === 'ASCENDING' ? 
+                    <FaSortUp size={20} className="relative top-[2px] pr-2" /> : 
+                    <FaSortDown size={20} className="relative top-[2px] pr-2" />)
+            }
+        </span>
+    )
+}
 
 export default function Users() {
     const { users } = useOutletContext<DashboardContextType>();
@@ -23,18 +54,23 @@ export default function Users() {
         return Array.from(rolesCount, ([name, value]) => ({ name, value }));;
     }
 
-    const TableData = ({ value, style }: { value: string, style?: string }) =>
-        <td className={`p-2 border-x-2 text-center ${style}`}>{value}</td>
+    const TableData = ({ value, style, sortable }: { value: string, style?: string, sortable?: boolean }) =>
+        <td className={`p-2 border-x-2 text-center ${style}`}>
+            <span className="flex flex-row">
+                {sortable && <Sorter list={users} property={value}/>}
+                {value}
+            </span>
+        </td>
 
     return (
         <div className={`flex w-4/5 h-[calc(100vw-${navbarHeight})]  p-2 flex-col gap-4`}>
             {!users.length ? <Loader /> :
                 <>
-                    <div className="overflow-auto h-1/2">
+                    <div className="overflow-auto h-1/2 border-y-2">
                         <table className="font-lato border-collapse w-full h-full">
                             <thead>
                                 <tr>
-                                    {"Id,Firstname,Lastname,Email,Roles".split(',').map(d => <TableData value={d} key={d} style="sticky top-0 z-[1] font-bold bg-white " />)}
+                                    {"Id,Firstname,Lastname,Email,Roles".split(',').map(d => <TableData value={d} key={d} sortable style="sticky top-0 z-[1] font-bold bg-white " />)}
                                 </tr>
                             </thead>
                             <tbody>
