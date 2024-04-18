@@ -54,7 +54,31 @@ export default function Users() {
                     </div>
                     <span className="h-1/2 w-full flex">
                         <CustomPieChart data={getDistributionOfUsers()} />
-                        <div className="w-full"><h1 className="text-3xl">Users activities</h1></div>
+                        <div className="w-full">
+                            <h1 className="text-3xl">Users activities</h1>
+                            <div className="flex flex-col gap-2 pt-2">
+                                <p className="w-full border-2 h-12 flex items-center p-2">
+                                    User&nbsp;<Link to='13' className="text-blue-500">Jan Kowalski</Link>
+                                    &nbsp;has successfully created an&nbsp;<Link to='../items/12' className="text-blue-500">Item</Link>
+                                    &nbsp;'Monitor'
+                                </p>
+                                <p className="w-full border-2 h-12 flex items-center p-2">
+                                    User&nbsp;<Link to='13' className="text-blue-500">Jan Kowalski</Link>
+                                    &nbsp;has successfully created an&nbsp;<Link to='../items/12' className="text-blue-500">Item</Link>
+                                    &nbsp;'Monitor'
+                                </p>
+                                <p className="w-full border-2 h-12 flex items-center p-2">
+                                    User&nbsp;<Link to='13' className="text-blue-500">Jan Kowalski</Link>
+                                    &nbsp;has successfully created an&nbsp;<Link to='../items/12' className="text-blue-500">Item</Link>
+                                    &nbsp;'Monitor'
+                                </p>
+                                <p className="w-full border-2 h-12 flex items-center p-2 bg-red-200">
+                                    User&nbsp;<Link to='13' className="text-blue-500">Adam Nowak</Link>
+                                    &nbsp;was&nbsp;<span className="text-red-600 underline">unauthorized</span>&nbsp;when trying to access&nbsp;<Link to='../users' className="text-blue-500">Users</Link>
+                                </p>
+                            </div>
+                            <h2 className="text-xl text-gray-500 text-center pt-4">There was no more activity today.</h2>
+                        </div>
                     </span>
                 </>
             }
