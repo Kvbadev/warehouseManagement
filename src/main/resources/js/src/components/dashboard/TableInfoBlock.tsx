@@ -5,10 +5,10 @@ import Delivery from "../../models/delivery";
 
 export function TableItemInfoBlock({ name, items }: { name: string, items: Item[] }) {
     return (
-        <div className="flex flex-col w-full bg-gray-400 rounded-tl-xl rounded-br-xl min-h-[305px]">
-            <h1 className="font-lato text-4xl pt-2 w-full text-center text-gray-200">{name}</h1>
+        <div className="flex flex-col w-full bg-gray-200 rounded-tl-xl rounded-br-xl min-h-[305px]">
+            <h1 className="font-lato text-4xl pt-2 w-full text-center">{name}</h1>
             <div className="flex flex-col flex-1 p-4 font-lato text-gray-800 ">
-                <div className="flex flex-row">
+                <div className="flex flex-row [&>p]:font-bold">
                     <p className="flex-1">Id</p>
                     <p className="flex-1">Name</p>
                     <p className="flex-1">Price</p>
@@ -61,10 +61,10 @@ export function TableDeliveryInfoBlock({ name, deliveries }: { name: string, del
         return false;
     }
     return (
-        <div className="flex flex-col w-full bg-gray-400 rounded-tl-xl rounded-br-xl min-h-[305px]">
-            <h1 className="font-lato text-4xl pt-2 w-full text-center text-gray-200">{name}</h1>
+        <div className="flex flex-col w-full bg-gray-200 rounded-tl-xl rounded-br-xl min-h-[305px]">
+            <h1 className="font-lato text-4xl pt-2 w-full text-center">{name}</h1>
             <div className="flex flex-col flex-1 p-4 font-lato text-gray-800 ">
-                <div className="flex flex-row">
+                <div className="flex flex-row [&>p]:font-bold">
                     <p className="flex-1">Id</p>
                     <p className="flex-1">Estimated Arrival</p>
                     <p className="flex-1">Has Arrived</p>
