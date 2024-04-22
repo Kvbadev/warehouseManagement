@@ -3,41 +3,15 @@ import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { DashboardContextType } from "../Dashboard";
 import CustomPieChart from "../../charts/piechart";
 import { navbarHeight } from "../../navbar/Navbar";
-import chartData from "../../../models/chartData";
-import { FaSort, FaSortAlphaDown, FaSortAlphaUp, FaSortDown, FaSortUp } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { SortIcons } from "../../utility/SortIcons";
+import { SortState } from "../../../models/sortState";
 
-export function Sorter({list, property}: {list: any[], property: string}) {
-    const [sortState, setSortState] = useState('UNSORTED' as 'UNSORTED'|'ASCENDING'|'DESCENDING')
-    const handleClick = () => {
-        switch(sortState) {
-            case 'UNSORTED':
-                setSortState('ASCENDING')
-                break
-            case 'ASCENDING':
-                setSortState('DESCENDING')
-                break
-            default:
-                setSortState('UNSORTED')
-                break
-        }
-
-        list.sort((a, b) => a[property]-b[property])
-    }
-    return (
-        <span onClick={handleClick} className="cursor-pointer">
-            {sortState === 'UNSORTED' ?
-                <FaSort size={20} className="relative top-[2px] pr-2" /> : 
-                (sortState === 'ASCENDING' ? 
-                    <FaSortUp size={20} className="relative top-[2px] pr-2" /> : 
-                    <FaSortDown size={20} className="relative top-[2px] pr-2" />)
-            }
-        </span>
-    )
-}
 
 export default function Users() {
-    const { users } = useOutletContext<DashboardContextType>();
+    const { users, setUsers } = useOutletContext<DashboardContextType>()
+    const [sortState, setSortState] = useState('UNSORTED' as SortState)
+    const [sortedBy, setSortedBy] = useState('Id' as 'Id'|'Firstname'|'Lastname'|'Email'|'Roles')
     const navigate = useNavigate()
 
     function getDistributionOfUsers(): { name: string; value: number; }[] {
@@ -51,13 +25,37 @@ export default function Users() {
                 }
             })
         })
-        return Array.from(rolesCount, ([name, value]) => ({ name, value }));;
+        // the array is sorted because every time 'users' were sorted, the order would change and the piechart would rerender
+        return Array.from(rolesCount, ([name, value]) => ({ name, value })).sort((a,b) => a.value-b.value)
     }
+
+    //run when sorting icon is clicked
+    useEffect(() => {
+        const prevUsers = [...users]
+        prevUsers.sort((a, b) => {
+            switch(sortedBy) {
+                case "Id":
+                    return a.id! - b.id!
+                case "Firstname":
+                    return a.firstName.localeCompare(b.firstName)
+                case "Lastname":
+                    return a.lastName.localeCompare(b.lastName)
+                case "Email":
+                    return a.email.localeCompare(b.email)
+                case "Roles":
+                    return a.roleNames.join(',').localeCompare(b.roleNames.join(','))
+            }
+        })
+        if(sortState == 'DESCENDING') {
+            prevUsers.reverse()
+        }
+        setUsers(prevUsers)
+    }, [sortedBy, sortState])
 
     const TableData = ({ value, style, sortable }: { value: string, style?: string, sortable?: boolean }) =>
         <td className={`p-2 border-x-2 text-center ${style}`}>
             <span className="flex flex-row">
-                {sortable && <Sorter list={users} property={value}/>}
+                {sortable && <SortIcons property={value} sortedBy={sortedBy} setSortedBy={setSortedBy} state={sortState} setState={setSortState} />}
                 {value}
             </span>
         </td>
@@ -81,14 +79,14 @@ export default function Users() {
                                             <TableData value={u.firstName} />
                                             <TableData value={u.lastName} />
                                             <TableData value={u.email} />
-                                            <TableData value={u.roleNames.join(',')} />
+                                            <TableData value={u.roleNames?.join(',')} />
                                         </tr>
                                     )
                                 })}
                             </tbody>
                         </table>
                     </div>
-                    <span className="h-1/2 w-full flex">
+                    <div className="h-1/2 w-full flex">
                         <CustomPieChart data={getDistributionOfUsers()} />
                         <div className="w-full">
                             <h1 className="text-3xl">Users activities</h1>
@@ -115,7 +113,7 @@ export default function Users() {
                             </div>
                             <h2 className="text-xl text-gray-500 text-center pt-4">There was no more activity today.</h2>
                         </div>
-                    </span>
+                    </div>
                 </>
             }
         </div>

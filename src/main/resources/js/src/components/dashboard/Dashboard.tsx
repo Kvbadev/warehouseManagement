@@ -9,7 +9,7 @@ import Delivery from "../../models/delivery";
 import { User } from "../../models/user";
 import { AxiosError } from "axios";
 
-export type DashboardContextType = { items: Item[], deliveries: Delivery[], users: User[] };
+export type DashboardContextType = { items: Item[], deliveries: Delivery[], users: User[], setUsers: (prev: User[]) => void };
 
 export function Dashboard() {
 
@@ -68,7 +68,7 @@ export function Dashboard() {
       {token &&
         <>
           <Sidebar />
-          <Outlet context={{ items, deliveries, users } satisfies DashboardContextType} />
+          <Outlet context={{ items, deliveries, users, setUsers } satisfies DashboardContextType} />
         </>
       }
     </div>
