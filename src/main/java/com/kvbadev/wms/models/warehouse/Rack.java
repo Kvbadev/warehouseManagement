@@ -1,6 +1,10 @@
 package com.kvbadev.wms.models.warehouse;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.util.Objects;
 
 @Entity
@@ -9,6 +13,9 @@ public class Rack {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @NotBlank(message = "Name is mandatory")
+    @Size(min = 5, max = 50, message = "Name must be between 5 and 50 characters")
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -28,14 +35,6 @@ public class Rack {
 
     public String getName() {
         return name;
-    }
-
-    public void addShelf(Shelf shelf) {
-        shelf.setRack(this);
-    }
-
-    public void removeShelf(Shelf shelf) {
-        shelf.setRack(null);
     }
 
     @Override

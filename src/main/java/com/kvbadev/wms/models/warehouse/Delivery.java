@@ -1,10 +1,11 @@
 package com.kvbadev.wms.models.warehouse;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
-import java.sql.Date;
+import java.time.LocalDate;
+import java.util.Objects;
 
-//The delivery class. The relationship between the delivery and the items in it is saved in a join table - delivery_items
 @Entity
 @Table(name = "deliveries")
 public class Delivery {
@@ -13,13 +14,17 @@ public class Delivery {
     private Integer id;
 
     @Column(name = "arrival_date")
-    private Date arrivalDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate arrivalDate;
+    @Column(name = "has_arrived")
+    private Boolean hasArrived;
 
     public Delivery() {
     }
 
-    public Delivery(Date arrivalDate) {
+    public Delivery(LocalDate arrivalDate, Boolean hasArrived) {
         this.arrivalDate = arrivalDate;
+        this.hasArrived = hasArrived;
     }
 
     public Integer getId() {
@@ -29,11 +34,31 @@ public class Delivery {
         this.id = id;
     }
 
-    public Date getArrivalDate() {
+    public LocalDate getArrivalDate() {
         return arrivalDate;
     }
 
-    public void setArrivalDate(Date arrivalDate) {
+    public void setArrivalDate(LocalDate arrivalDate) {
         this.arrivalDate = arrivalDate;
+    }
+
+    public Boolean getHasArrived() {
+        return hasArrived;
+    }
+
+    public void setHasArrived(Boolean hasArrived) {
+        this.hasArrived = hasArrived;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Delivery delivery)) return false;
+        return Objects.equals(id, delivery.id) && Objects.equals(arrivalDate, delivery.arrivalDate) && Objects.equals(hasArrived, delivery.hasArrived);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, arrivalDate, hasArrived);
     }
 }

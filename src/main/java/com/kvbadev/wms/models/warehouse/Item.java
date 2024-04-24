@@ -4,6 +4,8 @@ package com.kvbadev.wms.models.warehouse;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -13,11 +15,15 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Integer id;
+    @NotBlank(message = "Name is mandatory")
     private String name;
     private String description;
-    private int quantity;
+    @Positive(message = "Quantity must be greater than 0")
+    private Integer quantity;
     @Column(name = "net_price")
-    private long netPrice;
+    @Positive(message = "Net price must be greater than 0")
+    private Long netPrice;
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parcel_id")
     private Parcel parcel;
@@ -25,13 +31,7 @@ public class Item {
     public Item() {
     }
 
-    public Item(String name, String description, long netPrice) {
-        this.name = name;
-        this.description = description;
-        this.quantity = 1;
-        this.netPrice = netPrice;
-    }
-    public Item(String name, String description, int quantity, long netPrice) {
+    public Item(String name, String description, Integer quantity, Long netPrice) {
         this.name = name;
         this.description = description;
         this.quantity = quantity;
@@ -40,16 +40,23 @@ public class Item {
     public Integer getId() {
         return id;
     }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
     }
 
-    public int getQuantity() {
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
@@ -61,21 +68,22 @@ public class Item {
         this.description = description;
     }
 
-    public long getNetPrice() {
+    public Long getNetPrice() {
         return netPrice;
     }
-    public void setProductNetPrice(long netPrice) {
+    public void setNetPrice(Long netPrice) {
         this.netPrice = netPrice;
     }
     @JsonIgnore
     public BigDecimal getNormalizedNetPrice() {
         return new BigDecimal(netPrice).movePointLeft(2);
     }
+    public Parcel getParcel() {
+        return this.parcel;
+    }
     public void setParcel(Parcel parcel) {
         this.parcel = parcel;
     }
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

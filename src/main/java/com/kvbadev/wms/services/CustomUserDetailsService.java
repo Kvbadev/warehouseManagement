@@ -3,6 +3,7 @@ package com.kvbadev.wms.services;
 import com.kvbadev.wms.data.security.PrivilegeRepository;
 import com.kvbadev.wms.data.security.RoleRepository;
 import com.kvbadev.wms.data.security.UserRepository;
+import com.kvbadev.wms.models.exceptions.EntityNotFoundException;
 import com.kvbadev.wms.models.security.Privilege;
 import com.kvbadev.wms.models.security.Role;
 import com.kvbadev.wms.models.security.User;
@@ -13,11 +14,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @Service
@@ -33,14 +35,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            throw new UsernameNotFoundException(email);
-        }
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(), user.getPassword(), user.isEnabled(), true, true, true,
-                getAuthorities(roleRepository.findByUser(user.getEmail()))
-        );
+        return userRepository.findByEmail(email)
+                .map(u -> new org.springframework.security.core.userdetails.User(
+                        u.getEmail(), u.getPassword(), u.isEnabled(), true, true, true,
+                        getAuthorities(roleRepository.findByUser(u.getEmail()))
+                )).orElseThrow(() -> new EntityNotFoundException(User.class, "email", email));
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(Collection<Role> roles) {

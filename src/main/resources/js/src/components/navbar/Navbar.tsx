@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 interface navItem {
   id: number;
@@ -7,16 +8,16 @@ interface navItem {
 }
 export const navbarHeight = "48px";
 export function Navbar() {
+  const { token } = useAuth();
   const navItems: Array<navItem> = [
-    { id: 1, text: "Home", slug: "home" },
-    { id: 2, text: "About", slug: "about-us" },
-    { id: 3, text: "Sign in", slug: "sign-in" },
+    { id: 1, text: "About", slug: "about-us" },
+    token ? { id: 2, text: 'Profile', slug: 'profile' } : { id: 2, text: "Sign in", slug: "sign-in" },
   ];
 
   return (
-    <div className="sticky top-0 w-screen h-12 bg-slate-400/90 flex-row flex justify-between items-center backdrop-blur-sm">
+    <div className="sticky top-0 w-screen box-border h-12 bg-slate-400/90 flex-row flex justify-between items-center backdrop-blur-sm">
       <div className="logo text-gray-700 text-2xl justify-self-start m-2">
-        WMS.
+        <Link to="/">WMS.</Link>
       </div>
       <div className="flex flex-row px-4">
         {navItems.map((i) => {

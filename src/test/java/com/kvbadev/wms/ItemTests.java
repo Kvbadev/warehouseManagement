@@ -14,7 +14,7 @@ public class ItemTests {
 
     @Test
     public void checkIf_itemNetPrice_is_convertedCorrectly() {
-        Item item = new Item("name", "description", 33125);
+        Item item = new Item("name", "description",3, 33125L);
         System.out.println(item.getNormalizedNetPrice());
         assert Objects.equals(item.getNormalizedNetPrice(), new BigDecimal("331.25"));
     }

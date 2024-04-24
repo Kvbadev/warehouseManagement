@@ -6,12 +6,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DeliveryRepository extends JpaRepository<Delivery, Integer> {
     @Query(value = "SELECT * FROM deliveries ORDER BY arrival_date", nativeQuery = true)
-    List<Delivery> findLatestDeliveries();
+    List<Delivery> findLatest();
 
-    @Query(value = "SELECT DISTINCT d.* from deliveries d JOIN delivery_items di ON d.id = di.delivery_id WHERE di.item_id = :id",
-               nativeQuery = true)
-    List<Delivery> findDeliveriesByItemId(@Param("id") int id);
+    @Query(value = "SELECT d.* FROM deliveries d JOIN parcels p ON d.id = p.delivery_id WHERE p.id = id",
+            nativeQuery = true)
+    Optional<Delivery> findByParcelId(@Param("id") int parcelId);
 }
