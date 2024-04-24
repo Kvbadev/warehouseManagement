@@ -22,7 +22,7 @@ class ApiClient {
         })
         this.instance.interceptors.response.use(response => response,
             (err: AxiosError) => {
-                if (err.response && err.response.status == 403) {
+                if (err.response && err.response.status === 403) {
                     err.message = "You do not have sufficient priviliges. Use another account.";
                     console.log(`You do not have sufficient priviliges to use ${err.response.config.method} on ${err.response.config.url}. Use another account.`);
                 } else {
@@ -68,7 +68,7 @@ class ApiClient {
             username: email,
             password: password
         })).catch((err: AxiosError) => {
-            if (err.response?.status == 403) {
+            if (err.response?.status === 403) {
                 err.message = "Invalid credentials";
             }
             throw err;

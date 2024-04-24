@@ -1,8 +1,7 @@
-import React, { useContext } from 'react';
 import './App.css';
 import { Navbar } from './components/navbar/Navbar';
 import { Dashboard } from './components/dashboard/Dashboard';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import SignIn from './components/signIn/SignIn';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/ReactToastify.css';
@@ -13,6 +12,7 @@ import Users from './components/dashboard/users/Users';
 import Main from './components/Main';
 import Profile from './components/profile/Profile';
 import UserEdit from './components/dashboard/users/UserEdit';
+import Items from './components/dashboard/items/Items';
 
 function App() {
   return (
@@ -27,8 +27,8 @@ function App() {
                 <Route path='home' element={<Home />} />
                 <Route path='users' element={<Users />} />
                 <Route path='users/:id' element={<UserEdit />} />
-                <Route path='items' />
-                <Route path='items/:id' />
+                <Route path='items' element={<Items />} />
+                <Route path='items/:id' element={<Items />} />
                 <Route path='parcels' />
                 <Route path='parcels/:id' />
                 <Route path='deliveries' />
