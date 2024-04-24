@@ -1,8 +1,6 @@
 package com.kvbadev.wms.presentation.dataTransferObjects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
 import org.springframework.hateoas.server.core.Relation;
 
 import java.beans.ConstructorProperties;
@@ -16,7 +14,6 @@ public class UserView {
     private final String firstName;
     private final String lastName;
     private final String email;
-    @JsonProperty("roles")
     private final Set<String> roleNames = new HashSet<>();
 
     @JsonCreator
