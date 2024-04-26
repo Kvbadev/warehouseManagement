@@ -7,14 +7,17 @@ import Sidebar from "./Sidebar";
 import { Outlet } from "react-router-dom";
 import Delivery from "../../models/delivery";
 import { User } from "../../models/user";
+import GlobalError from "../../models/globalError";
+import { AxiosError } from "axios";
 
-export type DashboardContextType = { items: Item[], setItems: (prev: Item[]) => void, deliveries: Delivery[], users: User[], setUsers: (prev: User[]) => void };
+export type DashboardContextType = { items: Item[], setItems: (prev: Item[]) => void, deliveries: Delivery[], users: User[], setUsers: (prev: User[]) => void, globalError: GlobalError };
 
 export function Dashboard() {
 
   const [items, setItems] = useState([] as Item[]);
   const [deliveries, setDeliveries] = useState([] as Delivery[]);
   const [users, setUsers] = useState([] as User[]);
+  const [globalError, setGlobalError] = useState({} as GlobalError);
 
   const { token } = useAuth();
 
@@ -26,7 +29,13 @@ export function Dashboard() {
           res.length = 10;
           setItems(res);
         })
-        .catch((err: Error) => {
+        .catch((err: AxiosError) => {
+          setGlobalError((prev: GlobalError) => {
+            return {
+              ...prev,
+              items: err.response?.status
+            }
+          })
           toast(err.message, {
             type: 'error'
           })
@@ -37,7 +46,13 @@ export function Dashboard() {
         .then(res => {
           setDeliveries(res);
         })
-        .catch((err: Error) => {
+        .catch((err: AxiosError) => {
+          setGlobalError((prev: GlobalError) => {
+            return {
+              ...prev,
+              deliveries: err.response?.status
+            }
+          })
           toast(err.message, {
             type: 'error'
           })
@@ -46,7 +61,13 @@ export function Dashboard() {
     const getUsers = () => {
       api.getUsers().then(u => {
         setUsers(u);
-      }).catch((err: Error) => {
+      }).catch((err: AxiosError) => {
+        setGlobalError((prev: GlobalError) => {
+          return {
+            ...prev,
+            users: err.response?.status
+          }
+        })
         toast(err.message, {
           type: "error",
         });
@@ -67,7 +88,7 @@ export function Dashboard() {
       {token &&
         <>
           <Sidebar />
-          <Outlet context={{ items, setItems, deliveries, users, setUsers } satisfies DashboardContextType} />
+          <Outlet context={{ items, setItems, deliveries, users, setUsers, globalError } satisfies DashboardContextType} />
         </>
       }
     </div>

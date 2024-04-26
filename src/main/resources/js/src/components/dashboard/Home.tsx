@@ -5,7 +5,7 @@ import { DashboardContextType } from "./Dashboard";
 import { useLoggedUser } from "../../context/LoggedUserContext";
 
 export default function Home() {
-    const { items, deliveries } = useOutletContext<DashboardContextType>()
+    const { items, deliveries, globalError } = useOutletContext<DashboardContextType>()
     const {loggedUser} = useLoggedUser();
 
     return (
@@ -22,8 +22,8 @@ export default function Home() {
                     <SimpleInfoBlock digit={'$22.3k'} label="Total Worth" />
                 </div>
                 <div className="flex flex-row gap-4 w-full">
-                    <TableItemInfoBlock name="Items" items={items} />
-                    <TableDeliveryInfoBlock name="Deliveries" deliveries={deliveries} />
+                    <TableItemInfoBlock error={globalError.items} name="Items" items={items} />
+                    <TableDeliveryInfoBlock error={globalError.deliveries} name="Deliveries" deliveries={deliveries} />
                 </div>
                 <div className="flex flex-col bg-gray-400 h-24 p-2">
                     <h1 className="text-xl text-black">Latest errors</h1>

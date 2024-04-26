@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import Item from "../../models/item";
-import Loader from "./Loader";
+import Loader from "../utility/Loader";
 import Delivery from "../../models/delivery";
+import Unauthorized from "../utility/Unauthorized";
 
-export function TableItemInfoBlock({ name, items }: { name: string, items: Item[] }) {
+export function TableItemInfoBlock({ name, items, error }: { name: string, items: Item[], error?: number }) {
     return (
         <div className="flex flex-col w-full bg-gray-200 rounded-tl-xl rounded-br-xl min-h-[305px]">
             <h1 className="font-lato text-4xl pt-2 w-full text-center">{name}</h1>
@@ -15,8 +16,8 @@ export function TableItemInfoBlock({ name, items }: { name: string, items: Item[
                     <p className="flex-1">Parcel</p>
                 </div>
                 <hr className="h-px m-1 bg-gray-200 border-0 dark:bg-gray-500" />
-                {items.length === 0 && <Loader />}
-                {items.map(i => {
+                {error ? <Unauthorized /> : (items.length === 0 ?  <Loader /> : 
+                items.map(i => {
                     const itemParcel = i._links.parcel ? i._links.parcel?.href : '';
                     const parcelName = itemParcel.substring(itemParcel.lastIndexOf("/parcels/") + 1) ?? null;
 
@@ -37,7 +38,7 @@ export function TableItemInfoBlock({ name, items }: { name: string, items: Item[
                             {/* <hr className="h-px m-0.5 bg-gray-200 border-0 dark:bg-gray-500" /> */}
                         </div>
                     )
-                })}
+                }))}
             </div>
         </div>
     )
@@ -50,7 +51,7 @@ function ParcelNotSet({ itemId }: { itemId: number }) {
 }
 
 
-export function TableDeliveryInfoBlock({ name, deliveries }: { name: string, deliveries: Delivery[] }) {
+export function TableDeliveryInfoBlock({ name, deliveries, error }: { name: string, deliveries: Delivery[], error?: number }) {
     const isDelayed = (date: string, hasArrived: boolean) => {
         if (hasArrived) return false;
         const todayDateString = new Date().toISOString().slice(0, 10);
@@ -70,8 +71,8 @@ export function TableDeliveryInfoBlock({ name, deliveries }: { name: string, del
                     <p className="flex-1">Has Arrived</p>
                 </div>
                 <hr className="h-px m-1 bg-gray-200 border-0 dark:bg-gray-500" />
-                {deliveries.length === 0 && <Loader />}
-                {deliveries.map(d => {
+                {error ? <Unauthorized /> : (deliveries.length === 0 ?  <Loader /> : 
+                deliveries.map(d => {
                     return (
                         <Link to={`../deliveries/${d.id}`} key={d.id} className="flex flex-row hover:bg-gray-500">
                             <p className="flex-1">{d.id}</p>
@@ -81,7 +82,7 @@ export function TableDeliveryInfoBlock({ name, deliveries }: { name: string, del
                             <p className="flex-1">{d.hasArrived ? 'Yes' : 'No'}</p>
                         </Link>
                     )
-                })}
+                }))}
             </div>
         </div>
     )

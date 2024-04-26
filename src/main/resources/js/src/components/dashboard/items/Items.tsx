@@ -1,4 +1,4 @@
-import Loader from "../Loader";
+import Loader from "../../utility/Loader";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { DashboardContextType } from "../Dashboard";
 import CustomPieChart from "../../charts/piechart";
@@ -6,10 +6,11 @@ import { navbarHeight } from "../../navbar/Navbar";
 import { useEffect, useState } from "react";
 import { SortIcons } from "../../utility/SortIcons";
 import { SortState } from "../../../models/sortState";
+import Unauthorized from "../../utility/Unauthorized";
 
 
 export default function Items() {
-    const { items, setItems } = useOutletContext<DashboardContextType>()
+    const { items, setItems, globalError } = useOutletContext<DashboardContextType>()
     const [sortState, setSortState] = useState('UNSORTED' as SortState)
     const [sortedBy, setSortedBy] = useState('id' as 'id'|'name'|'description'|'quantity'|'netPrice')
     const navigate = useNavigate()
@@ -52,7 +53,7 @@ export default function Items() {
 
     return (
         <div className={`flex w-4/5 h-[calc(100vw-${navbarHeight})]  p-2 flex-col gap-4`}>
-            {!items.length ? <Loader /> :
+                {globalError.items ? <Unauthorized /> : (items.length === 0 ?  <Loader /> : 
                 <>
                     <div className="overflow-auto h-1/2 border-y-2">
                         <table className="font-lato border-collapse w-full h-full">
@@ -105,7 +106,7 @@ export default function Items() {
                         </div>
                     </div>
                 </>
-            }
+            )}
         </div>
     )
 }
