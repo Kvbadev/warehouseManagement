@@ -33,17 +33,18 @@ class ApiClient {
         )
     }
 
-    async getItems(): Promise<Item[]> {
+    async getItems(): Promise<any[]> {
         const response = await this.instance.get('/items')
         const data = response.data;
 
-        return data['_embedded']['itemList']
+        return [data['_embedded']['itemList'], response.headers['x-total-count'], response.headers['x-total-price']]
     }
-    async getDeliveries(): Promise<Delivery[]> {
-        const response = await this.instance.get('/deliveries/latest')
+    async getDeliveries(): Promise<any[]> {
+        const response = await this.instance.get('/deliveries')
+        const totalDelayed = response.headers['x-total-delayed']
         const data = response.data;
 
-        return data['_embedded']['deliveryList']
+        return [data['_embedded']['deliveryList'], totalDelayed]
     }
     async getUsers(): Promise<User[]> {
         const response = await this.instance.get('/users')

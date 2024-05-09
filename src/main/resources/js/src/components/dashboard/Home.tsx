@@ -5,7 +5,7 @@ import { DashboardContextType } from "./Dashboard";
 import { useLoggedUser } from "../../context/LoggedUserContext";
 
 export default function Home() {
-    const { items, deliveries, globalError } = useOutletContext<DashboardContextType>()
+    const { items, deliveries, globalError, itemsTotalCount, itemsTotalPrice, deliveriesTotalDelayed } = useOutletContext<DashboardContextType>()
     const {loggedUser} = useLoggedUser();
 
     return (
@@ -16,10 +16,10 @@ export default function Home() {
             </div>
             <div className="flex flex-col gap-4 justify-between">
                 <div className="flex flex-row gap-4 w-full">
-                    <SimpleInfoBlock digit="553" label="Items in stock" link="../items" linkLabel="Show all" />
-                    <SimpleInfoBlock digit="33" label="New deliveries" />
-                    <SimpleInfoBlock digit="4" label="Delayed deliveries" link="../deliveries?delayed=true" linkLabel="Resolve all" isNegative />
-                    <SimpleInfoBlock digit={'$22.3k'} label="Total Worth" />
+                    <SimpleInfoBlock digit={itemsTotalCount.toString()} label="Items in stock" link="../items" linkLabel="Show all" />
+                    {/* <SimpleInfoBlock digit="33" label="New deliveries" /> */}
+                    <SimpleInfoBlock digit={(deliveriesTotalDelayed ?? 0).toString()} label="Delayed deliveries" link="../deliveries?delayed=true" linkLabel="Resolve all" isNegative />
+                    <SimpleInfoBlock digit={'$' + Intl.NumberFormat('en', { notation: 'compact', maximumSignificantDigits: 4}).format(itemsTotalPrice)} label="Total Worth" />
                 </div>
                 <div className="flex flex-row gap-4 w-full">
                     <TableItemInfoBlock error={globalError.items} name="Items" items={items} />

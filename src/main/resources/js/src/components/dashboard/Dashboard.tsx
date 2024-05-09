@@ -10,7 +10,7 @@ import { User } from "../../models/user";
 import GlobalError from "../../models/globalError";
 import { AxiosError } from "axios";
 
-export type DashboardContextType = { items: Item[], setItems: (prev: Item[]) => void, deliveries: Delivery[], users: User[], setUsers: (prev: User[]) => void, globalError: GlobalError };
+export type DashboardContextType = { items: Item[], setItems: (prev: Item[]) => void, itemsTotalCount: number, itemsTotalPrice: number, deliveries: Delivery[], deliveriesTotalDelayed: number, users: User[], setUsers: (prev: User[]) => void, globalError: GlobalError };
 
 export function Dashboard() {
 
@@ -18,6 +18,9 @@ export function Dashboard() {
   const [deliveries, setDeliveries] = useState([] as Delivery[]);
   const [users, setUsers] = useState([] as User[]);
   const [globalError, setGlobalError] = useState({} as GlobalError);
+  const [itemsTotalCount, setItemsTotalCount] = useState(0)
+  const [itemsTotalPrice, setItemsTotalPrice] = useState(0)
+  const [deliveriesTotalDelayed, setDeliveriesTotalDelayed] = useState(0)
 
   const { token } = useAuth();
 
@@ -25,7 +28,9 @@ export function Dashboard() {
     if (!token) return;
     const getLimitItems = () => {
       api.getItems()
-        .then((res) => {
+        .then(([res, count, price]) => {
+          setItemsTotalCount(count)
+          setItemsTotalPrice(price)
           res.length = 10;
           setItems(res);
         })
@@ -43,7 +48,8 @@ export function Dashboard() {
     }
     const getLimitDeliveries = () => {
       api.getDeliveries()
-        .then(res => {
+        .then(([res, totalDelayed]) => {
+          setDeliveriesTotalDelayed(totalDelayed)
           setDeliveries(res);
         })
         .catch((err: AxiosError) => {
@@ -88,7 +94,7 @@ export function Dashboard() {
       {token &&
         <>
           <Sidebar />
-          <Outlet context={{ items, setItems, deliveries, users, setUsers, globalError } satisfies DashboardContextType} />
+          <Outlet context={{deliveriesTotalDelayed, items, setItems, itemsTotalCount, itemsTotalPrice, deliveries, users, setUsers, globalError } satisfies DashboardContextType} />
         </>
       }
     </div>
