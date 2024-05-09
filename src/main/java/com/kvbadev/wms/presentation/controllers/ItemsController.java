@@ -24,6 +24,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
@@ -45,11 +47,16 @@ public class ItemsController extends BaseController{
 
     @GetMapping(produces = HAL_JSON_VALUE)
     public ResponseEntity<CollectionModel<EntityModel<Item>>> getItems() {
-        List<EntityModel<Item>> items = itemRepository.findAll().stream()
+        List<Item> items = itemRepository.findAll();
+        List<EntityModel<Item>> responseItems = items.stream()
                 .map(item -> itemModelAssembler.toModel(item)).toList();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "*");
+        headers.set("X-Total-Count", String.valueOf(items.size()));
+        headers.set("X-Total-Price", String.valueOf(getTotalPrice(items)));
 
-        return ResponseEntity.ok(
-                CollectionModel.of(items, linkTo(methodOn(ItemsController.class).getItems()).withSelfRel())
+        return ResponseEntity.ok().headers(headers).body(
+                CollectionModel.of(responseItems, linkTo(methodOn(ItemsController.class).getItems()).withSelfRel())
         );
     }
 
@@ -155,5 +162,8 @@ public class ItemsController extends BaseController{
                             throw new EntityNotFoundException(Parcel.class, parcelId);
                         }
                 );
+    }
+    private long getTotalPrice(List<Item> items) {
+        return items.stream().map(Item::getNormalizedNetPrice).reduce(BigDecimal.ZERO, BigDecimal::add).longValue();
     }
 }

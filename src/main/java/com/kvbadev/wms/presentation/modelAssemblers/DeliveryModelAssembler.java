@@ -16,7 +16,7 @@ public class DeliveryModelAssembler implements RepresentationModelAssembler<Deli
     public EntityModel<Delivery> toModel(Delivery delivery) {
         Links links = Links.of(
                 linkTo(methodOn(DeliveriesController.class).getDelivery(delivery.getId())).withSelfRel(),
-                linkTo(methodOn(DeliveriesController.class).getDeliveries()).withRel("deliveries")
+                linkTo(methodOn(DeliveriesController.class).getDeliveries(null)).withRel("deliveries")
         );
         return EntityModel.of(delivery,links);
     }
