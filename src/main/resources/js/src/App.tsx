@@ -13,6 +13,11 @@ import Main from './components/Main';
 import Profile from './components/profile/Profile';
 import UserEdit from './components/dashboard/users/UserEdit';
 import Items from './components/dashboard/items/Items';
+import ItemEdit from './components/dashboard/items/ItemEdit';
+import Parcels from './components/dashboard/parcels/Parcels';
+import ParcelEdit from './components/dashboard/parcels/ParcelEdit';
+import Deliveries from './components/dashboard/deliveries/Deliveries';
+import DeliveryEdit from './components/dashboard/deliveries/DeliveryEdit';
 
 function App() {
   return (
@@ -28,18 +33,14 @@ function App() {
                 <Route path='users' element={<Users />} />
                 <Route path='users/:id' element={<UserEdit />} />
                 <Route path='items' element={<Items />} />
-                <Route path='items/:id' element={<Items />} />
-                <Route path='parcels' />
-                <Route path='parcels/:id' />
-                <Route path='deliveries' />
-                <Route path='deliveries/:id' />
+                <Route path='items/:id' element={<ItemEdit />} />
+                <Route path='parcels' element={<Parcels />} />
+                <Route path='parcels/:id' element={<ParcelEdit />} />
+                <Route path='deliveries' element={<Deliveries />} />
+                <Route path='deliveries/:id' element={<DeliveryEdit/>} />
               </Route>
               <Route path="/sign-in" element={<SignIn />} />
               <Route path="/profile" element={<Profile />} />
-              {/* <Route
-              path="*"
-              element={<Navigate to="/" replace />}
-            /> */}
             </Routes>
           </BrowserRouter>
           <ToastContainer />

@@ -3,10 +3,20 @@ import SimpleInfoBlock from "./SimpleInfoBlock";
 import { TableItemInfoBlock, TableDeliveryInfoBlock } from "./TableInfoBlock";
 import { DashboardContextType } from "./Dashboard";
 import { useLoggedUser } from "../../context/LoggedUserContext";
+import { useEffect, useState } from "react";
+import Item from "../../models/item";
+import Delivery from "../../models/delivery";
 
 export default function Home() {
     const { items, deliveries, globalError, itemsTotalCount, itemsTotalPrice, deliveriesTotalDelayed } = useOutletContext<DashboardContextType>()
+    const [shortenedItems, setShortenedItems] = useState([] as Item[])
+    const [shortenedDeliveries, setShortenedDeliveries] = useState([] as Delivery[])
     const {loggedUser} = useLoggedUser();
+
+    useEffect(() => {
+        setShortenedItems(items.slice(0,10))
+        setShortenedDeliveries(deliveries.slice(0,10))
+    }, [items,deliveries])
 
     return (
         <div className="max-w-6xl mx-auto my-0 w-4/5 p-4">
@@ -22,8 +32,8 @@ export default function Home() {
                     <SimpleInfoBlock digit={'$' + Intl.NumberFormat('en', { notation: 'compact', maximumSignificantDigits: 4}).format(itemsTotalPrice)} label="Total Worth" />
                 </div>
                 <div className="flex flex-row gap-4 w-full">
-                    <TableItemInfoBlock error={globalError.items} name="Items" items={items} />
-                    <TableDeliveryInfoBlock error={globalError.deliveries} name="Deliveries" deliveries={deliveries} />
+                    <TableItemInfoBlock error={globalError.items} name="Items" items={shortenedItems} />
+                    <TableDeliveryInfoBlock error={globalError.deliveries} name="Deliveries" deliveries={shortenedDeliveries} />
                 </div>
                 <div className="flex flex-col bg-gray-400 h-24 p-2">
                     <h1 className="text-xl text-black">Latest errors</h1>

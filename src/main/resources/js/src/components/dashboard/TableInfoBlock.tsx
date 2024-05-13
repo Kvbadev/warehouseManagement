@@ -10,10 +10,10 @@ export function TableItemInfoBlock({ name, items, error }: { name: string, items
             <h1 className="font-lato text-4xl pt-2 w-full text-center">{name}</h1>
             <div className="flex flex-col flex-1 p-4 font-lato text-gray-800 ">
                 <div className="flex flex-row [&>p]:font-bold">
-                    <p className="flex-1">Id</p>
-                    <p className="flex-1">Name</p>
-                    <p className="flex-1">Price</p>
-                    <p className="flex-1">Parcel</p>
+                    <p className="w-1/6">Id</p>
+                    <p className="w-3/6">Name</p>
+                    <p className="w-1/6">Price</p>
+                    <p className="w-1/3">Parcel</p>
                 </div>
                 <hr className="h-px m-1 bg-gray-200 border-0 dark:bg-gray-500" />
                 {error ? <Unauthorized /> : (items.length === 0 ?  <Loader /> : 
@@ -23,12 +23,12 @@ export function TableItemInfoBlock({ name, items, error }: { name: string, items
 
                     return (
                         <div key={i.id} className="flex flex-row">
-                            <p className="flex-1">{i.id}</p>
-                            <p className="flex-1">
+                            <p className="w-1/6">{i.id}</p>
+                            <p className="w-3/6">
                                 <Link to={`../items/${i.id}`} className="hover:text-orange-600">{i.name}</Link>
                             </p>
-                            <p className="flex-1">${i.netPrice}</p>
-                            <p className="flex-1">
+                            <p className="w-1/6">${i.netPrice}</p>
+                            <p className="w-1/3">
                                 {parcelName !== '' ?
                                     <Link to={`../${parcelName}`} className="hover:text-orange-600">
                                         {parcelName}
@@ -58,7 +58,7 @@ export function TableDeliveryInfoBlock({ name, deliveries, error }: { name: stri
         const todayDate = Date.parse(todayDateString);
         const arrivalDate = Date.parse(date)
 
-        if (todayDate > arrivalDate) return true;
+        if (todayDate < arrivalDate) return true;
         return false;
     }
     return (

@@ -80,7 +80,17 @@ export default function UserEdit() {
     }
     const handleDelete: React.MouseEventHandler<HTMLButtonElement> = (_e) => {
         setDeleting(true);
+        api.deleteUser(user.id!)
+        .catch((err: AxiosError) => {
+            if(err.response?.status === 400 && err.message == 'Validation error') {
 
+                const data = err.response.data as ApiError;
+                setValidationErrors(data.subErrors!) //if it's a validation error then there is at least one subError
+            } else {
+                toast('Could not update the user: ' + err.message, {type: 'error'});
+            }
+        })
+        .finally(() => setDeleting(false))
     }
 
     return (
