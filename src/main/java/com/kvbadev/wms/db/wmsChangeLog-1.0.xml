@@ -221,4 +221,13 @@
     <changeSet id="31" author="jakub_piasecki">
         <addNotNullConstraint tableName="deliveries" columnName="has_arrived" />
     </changeSet>
+    <changeSet id="33" author="jakub_piasecki">
+        <loadData tableName="parcels" file="src/main/java/com/kvbadev/wms/db/parcels.csv" />
+    </changeSet>
+    <changeSet id="32" author="jakub_piasecki">
+        <loadData tableName="items" file="src/main/java/com/kvbadev/wms/db/items.csv" />
+    </changeSet>
+    <changeSet id="34" author="jakub_piasecki">
+        <loadData tableName="deliveries" file="src/main/java/com/kvbadev/wms/db/deliveries.csv" />
+    </changeSet>
 </databaseChangeLog>

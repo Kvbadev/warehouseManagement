@@ -21,8 +21,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,11 +42,20 @@ public class DeliveriesController extends BaseController {
     private final DeliveryMapper deliveryMapper = DeliveryMapper.INSTANCE;
 
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<Delivery>>> getDeliveries() {
-        List<EntityModel<Delivery>> deliveries = deliveryRepository.findAll()
+    public ResponseEntity<CollectionModel<EntityModel<Delivery>>> getDeliveries(@Nullable @RequestParam("delayed") Boolean delayed) {
+        List<Delivery> deliveries;
+        if(delayed != null && delayed) deliveries = deliveryRepository.findDelayed();
+        else  deliveries = deliveryRepository.findAll();
+
+        List<EntityModel<Delivery>> responseDeliveries = deliveries
                 .stream().map(d -> deliveryModelAssembler.toModel(d)).toList();
-        return ResponseEntity.ok(
-                CollectionModel.of(deliveries, linkTo(methodOn(DeliveriesController.class).getDeliveries()).withSelfRel())
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "*");
+        headers.set("X-Total-Delayed", String.valueOf(getDelayedCount(deliveries)));
+
+        return ResponseEntity.ok().headers(headers).body(
+                CollectionModel.of(responseDeliveries, linkTo(methodOn(DeliveriesController.class).getDeliveries(null)).withSelfRel())
         );
     }
 
@@ -137,5 +148,9 @@ public class DeliveriesController extends BaseController {
                                 .orElseThrow(() -> new EntityNotFoundException(Delivery.class,"deliveryId", null))
                 ).orElseThrow(() -> new EmptyRequestParamException("parcelId"))
         );
+    }
+
+    private long getDelayedCount(List<Delivery> deliveries) {
+        return deliveries.stream().filter(d -> !d.getHasArrived() && d.getArrivalDate().isAfter(LocalDate.now())).count();
     }
 }

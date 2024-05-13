@@ -12,7 +12,11 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Integer> {
     @Query(value = "SELECT * FROM deliveries ORDER BY arrival_date", nativeQuery = true)
     List<Delivery> findLatest();
 
+    @Query(value = "SELECT * FROM deliveries WHERE deliveries.delayed = true ORDER BY arrival_date", nativeQuery = true)
+    List<Delivery> findDelayed();
+
     @Query(value = "SELECT d.* FROM deliveries d JOIN parcels p ON d.id = p.delivery_id WHERE p.id = id",
             nativeQuery = true)
     Optional<Delivery> findByParcelId(@Param("id") int parcelId);
+
 }

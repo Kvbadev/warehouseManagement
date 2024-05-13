@@ -3,10 +3,20 @@ import SimpleInfoBlock from "./SimpleInfoBlock";
 import { TableItemInfoBlock, TableDeliveryInfoBlock } from "./TableInfoBlock";
 import { DashboardContextType } from "./Dashboard";
 import { useLoggedUser } from "../../context/LoggedUserContext";
+import { useEffect, useState } from "react";
+import Item from "../../models/item";
+import Delivery from "../../models/delivery";
 
 export default function Home() {
-    const { items, deliveries } = useOutletContext<DashboardContextType>()
+    const { items, deliveries, globalError, itemsTotalCount, itemsTotalPrice, deliveriesTotalDelayed } = useOutletContext<DashboardContextType>()
+    const [shortenedItems, setShortenedItems] = useState([] as Item[])
+    const [shortenedDeliveries, setShortenedDeliveries] = useState([] as Delivery[])
     const {loggedUser} = useLoggedUser();
+
+    useEffect(() => {
+        setShortenedItems(items.slice(0,10))
+        setShortenedDeliveries(deliveries.slice(0,10))
+    }, [items,deliveries])
 
     return (
         <div className="max-w-6xl mx-auto my-0 w-4/5 p-4">
@@ -16,14 +26,14 @@ export default function Home() {
             </div>
             <div className="flex flex-col gap-4 justify-between">
                 <div className="flex flex-row gap-4 w-full">
-                    <SimpleInfoBlock digit="553" label="Items in stock" link="../items" linkLabel="Show all" />
-                    <SimpleInfoBlock digit="33" label="New deliveries" />
-                    <SimpleInfoBlock digit="4" label="Delayed deliveries" link="../deliveries?delayed=true" linkLabel="Resolve all" isNegative />
-                    <SimpleInfoBlock digit={'$22.3k'} label="Total Worth" />
+                    <SimpleInfoBlock digit={itemsTotalCount.toString()} label="Items in stock" link="../items" linkLabel="Show all" />
+                    {/* <SimpleInfoBlock digit="33" label="New deliveries" /> */}
+                    <SimpleInfoBlock digit={(deliveriesTotalDelayed ?? 0).toString()} label="Delayed deliveries" link="../deliveries?delayed=true" linkLabel="Resolve all" isNegative />
+                    <SimpleInfoBlock digit={'$' + Intl.NumberFormat('en', { notation: 'compact', maximumSignificantDigits: 4}).format(itemsTotalPrice)} label="Total Worth" />
                 </div>
                 <div className="flex flex-row gap-4 w-full">
-                    <TableItemInfoBlock name="Items" items={items} />
-                    <TableDeliveryInfoBlock name="Deliveries" deliveries={deliveries} />
+                    <TableItemInfoBlock error={globalError.items} name="Items" items={shortenedItems} />
+                    <TableDeliveryInfoBlock error={globalError.deliveries} name="Deliveries" deliveries={shortenedDeliveries} />
                 </div>
                 <div className="flex flex-col bg-gray-400 h-24 p-2">
                     <h1 className="text-xl text-black">Latest errors</h1>

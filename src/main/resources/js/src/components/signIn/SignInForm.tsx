@@ -4,7 +4,7 @@ import { api } from "../../api/apiClient";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import Loader from "../dashboard/Loader";
+import Loader from "../utility/Loader";
 import { useLoggedUser } from "../../context/LoggedUserContext";
 import { User } from "../../models/user";
 import { AxiosError } from "axios";
