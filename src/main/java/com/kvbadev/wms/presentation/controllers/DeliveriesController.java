@@ -151,6 +151,6 @@ public class DeliveriesController extends BaseController {
     }
 
     private long getDelayedCount(List<Delivery> deliveries) {
-        return deliveries.stream().filter(d -> !d.getHasArrived() && d.getArrivalDate().isAfter(LocalDate.now().minusYears(1))).count();
+        return deliveries.stream().filter(d -> !d.getHasArrived() && d.getArrivalDate().isAfter(LocalDate.now())).count();
     }
 }
