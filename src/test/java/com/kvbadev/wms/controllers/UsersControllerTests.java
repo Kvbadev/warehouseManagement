@@ -53,7 +53,7 @@ public class UsersControllerTests {
                 )
         );
         when(userRepository.findAll()).thenReturn(users);
-        this.mockMvc.perform(get("/users"))
+        this.mockMvc.perform(get("/api/users"))
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .contentTypeCompatibleWith(HAL_JSON))
@@ -65,7 +65,7 @@ public class UsersControllerTests {
     void findOneUserShouldReturnUserEntityModel() throws Exception {
         when(userRepository.findById(2)).thenReturn(Optional.of(testUser));
 
-        this.mockMvc.perform(get("/users/2"))
+        this.mockMvc.perform(get("/api/users/2"))
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .contentTypeCompatibleWith(HAL_JSON))
@@ -76,7 +76,7 @@ public class UsersControllerTests {
     void findOneUserNonExistentIdShouldReturn404AndMessage() throws Exception {
         when(userRepository.findById(2)).thenReturn(Optional.empty());
 
-        this.mockMvc.perform(get("/users/2"))
+        this.mockMvc.perform(get("/api/users/2"))
                 .andExpect(status().isNotFound())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -94,21 +94,21 @@ public class UsersControllerTests {
         when(userService.saveUser(any())).thenReturn(user);
 
 
-        this.mockMvc.perform(post("/users")
+        this.mockMvc.perform(post("/api/users")
                         .content(objectMapper.writeValueAsString(userToPost))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content()
                         .contentTypeCompatibleWith(HAL_JSON))
                 .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(header().stringValues("Location", "http://localhost/users/1")); //no api context path because it's a test
+                .andExpect(header().stringValues("Location", "http://localhost/api/users/1")); //no api context path because it's a test
     }
 
     @Test
     void createUserWithSameEmailThrowsDuplicateException() throws Exception {
         when(userService.saveUser(any())).thenThrow(new DuplicateResourceException(User.class, "email", testUser.getEmail()));
         User userToPost = new User(testUser);
-        this.mockMvc.perform(post("/users")
+        this.mockMvc.perform(post("/api/users")
                         .content(objectMapper.writeValueAsString(userToPost))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict());
@@ -126,7 +126,7 @@ public class UsersControllerTests {
         when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
 
 
-        this.mockMvc.perform(put("/users")
+        this.mockMvc.perform(put("/api/users")
                         .content(objectMapper.writeValueAsString(putRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -146,12 +146,12 @@ public class UsersControllerTests {
         when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
 
 
-        this.mockMvc.perform(put("/users")
+        this.mockMvc.perform(put("/api/users")
                         .content(objectMapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.email").value(user.getEmail()))
-                .andExpect(header().stringValues("Location", "http://localhost/users/1")); //no api context path because it's a test
+                .andExpect(header().stringValues("Location", "http://localhost/api/users/1")); //no api context path because it's a test
     }
 
     @Test
@@ -167,7 +167,7 @@ public class UsersControllerTests {
         when(userService.updateUser(any(), anyInt())).thenReturn(u);
 
 
-        this.mockMvc.perform(patch("/users/1")
+        this.mockMvc.perform(patch("/api/users/1")
                         .content(objectMapper.writeValueAsString(u))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -177,14 +177,14 @@ public class UsersControllerTests {
 
     @Test
     void deleteUserReturnsNoContent() throws Exception {
-        this.mockMvc.perform(delete("/users/1"))
+        this.mockMvc.perform(delete("/api/users/1"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     void deleteUserIncorrectIdReturns404() throws Exception {
         doThrow(new EntityNotFoundException(User.class, 233)).when(userRepository).deleteById(any());
-        this.mockMvc.perform(delete("/users/223"))
+        this.mockMvc.perform(delete("/api/users/223"))
                 .andExpect(status().isNotFound());
     }
 

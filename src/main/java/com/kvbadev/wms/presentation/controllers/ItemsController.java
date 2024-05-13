@@ -33,7 +33,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping("/items")
+@RequestMapping("/api/items")
 public class ItemsController extends BaseController{
     @Autowired
     private ItemRepository itemRepository;

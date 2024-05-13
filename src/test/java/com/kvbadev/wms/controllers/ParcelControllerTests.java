@@ -65,7 +65,7 @@ public class ParcelControllerTests {
         when(parcelModelAssembler.toModel(any(Parcel.class)))
                 .thenReturn(EntityModel.of(parcels.get(0)));
 
-        this.mockMvc.perform(get("/parcels"))
+        this.mockMvc.perform(get("/api/parcels"))
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .contentTypeCompatibleWith(HAL_JSON))
@@ -81,7 +81,7 @@ public class ParcelControllerTests {
         when(parcelRepository.findById(2)).thenReturn(Optional.of(parcel));
         when(parcelModelAssembler.toModel(parcel)).thenReturn(EntityModel.of(parcel));
 
-        this.mockMvc.perform(get("/parcels/2"))
+        this.mockMvc.perform(get("/api/parcels/2"))
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .contentTypeCompatibleWith(HAL_JSON))
@@ -92,7 +92,7 @@ public class ParcelControllerTests {
     void findOneParcelInvalidIdShouldReturn404AndMessage() throws Exception {
         when(parcelRepository.findById(2)).thenReturn(Optional.empty());
 
-        this.mockMvc.perform(get("/parcels/2"))
+        this.mockMvc.perform(get("/api/parcels/2"))
                 .andExpect(status().isNotFound())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -111,14 +111,14 @@ public class ParcelControllerTests {
 
         when(parcelModelAssembler.toModel(parcel)).thenReturn(EntityModel.of(parcel));
 
-        this.mockMvc.perform(post("/parcels")
+        this.mockMvc.perform(post("/api/parcels")
                         .content(objectMapper.writeValueAsString(parcel))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content()
                         .contentTypeCompatibleWith(HAL_JSON))
                 .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(header().stringValues("Location", "http://localhost/parcels/1")); //no api context path because it's a test
+                .andExpect(header().stringValues("Location", "http://localhost/api/parcels/1")); //no api context path because it's a test
     }
 
     @Test
@@ -135,7 +135,7 @@ public class ParcelControllerTests {
 
         when(parcelModelAssembler.toModel(parcel)).thenReturn(EntityModel.of(parcel));
 
-        this.mockMvc.perform(put("/parcels")
+        this.mockMvc.perform(put("/api/parcels")
                         .content(objectMapper.writeValueAsString(putRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -155,12 +155,12 @@ public class ParcelControllerTests {
 
         when(parcelModelAssembler.toModel(parcel)).thenReturn(EntityModel.of(parcel));
 
-        this.mockMvc.perform(put("/parcels")
+        this.mockMvc.perform(put("/api/parcels")
                         .content(objectMapper.writeValueAsString(parcel))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value(parcel.getName()))
-                .andExpect(header().stringValues("Location", "http://localhost/parcels/1")); //no api context path because it's a test
+                .andExpect(header().stringValues("Location", "http://localhost/api/parcels/1")); //no api context path because it's a test
     }
 
     @Test
@@ -177,7 +177,7 @@ public class ParcelControllerTests {
 
         when(parcelModelAssembler.toModel(parcel)).thenReturn(EntityModel.of(parcel));
 
-        this.mockMvc.perform(patch("/parcels/1")
+        this.mockMvc.perform(patch("/api/parcels/1")
                         .content(objectMapper.writeValueAsString(parcel))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -185,13 +185,13 @@ public class ParcelControllerTests {
     }
     @Test
     void deleteParcelReturnsNoContent() throws Exception {
-        this.mockMvc.perform(delete("/parcels/1"))
+        this.mockMvc.perform(delete("/api/parcels/1"))
                 .andExpect(status().isNoContent());
     }
     @Test
     void deleteParcelIncorrectIdReturns404() throws Exception {
         doThrow(new EntityNotFoundException(Parcel.class, 233)).when(parcelRepository).deleteById(any());
-        this.mockMvc.perform(delete("/parcels/223"))
+        this.mockMvc.perform(delete("/api/parcels/223"))
                 .andExpect(status().isNotFound());
     }
 
@@ -205,7 +205,7 @@ public class ParcelControllerTests {
         when(parcelModelAssembler.toModel(any(Parcel.class)))
                 .thenReturn(EntityModel.of(parcel));
 
-        this.mockMvc.perform(get("/parcels").param("itemId", "1"))
+        this.mockMvc.perform(get("/api/parcels").param("itemId", "1"))
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .contentTypeCompatibleWith(HAL_JSON))
