@@ -33,7 +33,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping("/deliveries")
+@RequestMapping("/api/deliveries")
 public class DeliveriesController extends BaseController {
     @Autowired
     DeliveryRepository deliveryRepository;

@@ -63,7 +63,7 @@ public class DeliveryControllerTests {
         when(DeliveryModelAssembler.toModel(any(Delivery.class)))
                 .thenReturn(EntityModel.of(Deliveries.get(0)));
 
-        this.mockMvc.perform(get("/deliveries"))
+        this.mockMvc.perform(get("/api/deliveries"))
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .contentTypeCompatibleWith(HAL_JSON))
@@ -79,7 +79,7 @@ public class DeliveryControllerTests {
         when(deliveryRepository.findById(2)).thenReturn(Optional.of(Delivery));
         when(DeliveryModelAssembler.toModel(Delivery)).thenReturn(EntityModel.of(Delivery));
 
-        this.mockMvc.perform(get("/deliveries/2"))
+        this.mockMvc.perform(get("/api/deliveries/2"))
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .contentTypeCompatibleWith(HAL_JSON))
@@ -90,7 +90,7 @@ public class DeliveryControllerTests {
     void findOneDeliveryInvalidIdShouldReturn404AndMessage() throws Exception {
         when(deliveryRepository.findById(2)).thenReturn(Optional.empty());
 
-        this.mockMvc.perform(get("/deliveries/2"))
+        this.mockMvc.perform(get("/api/deliveries/2"))
                 .andExpect(status().isNotFound())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -110,14 +110,14 @@ public class DeliveryControllerTests {
         when(DeliveryModelAssembler.toModel(delivery)).thenReturn(EntityModel.of(delivery));
         var x = objectMapper.writeValueAsString(delivery);
 
-        this.mockMvc.perform(post("/deliveries")
+        this.mockMvc.perform(post("/api/deliveries")
                         .content(objectMapper.writeValueAsString(delivery))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content()
                         .contentTypeCompatibleWith(HAL_JSON))
                 .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(header().stringValues("Location", "http://localhost/deliveries/1")); //no api context path because it's a test
+                .andExpect(header().stringValues("Location", "http://localhost/api/deliveries/1")); //no api context path because it's a test
     }
 
     @Test
@@ -135,7 +135,7 @@ public class DeliveryControllerTests {
 
         when(DeliveryModelAssembler.toModel(delivery)).thenReturn(EntityModel.of(delivery));
 
-        this.mockMvc.perform(put("/deliveries")
+        this.mockMvc.perform(put("/api/deliveries")
                         .content(objectMapper.writeValueAsString(putRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -155,12 +155,12 @@ public class DeliveryControllerTests {
 
         when(DeliveryModelAssembler.toModel(Delivery)).thenReturn(EntityModel.of(Delivery));
 
-        this.mockMvc.perform(put("/deliveries")
+        this.mockMvc.perform(put("/api/deliveries")
                         .content(objectMapper.writeValueAsString(Delivery))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.arrivalDate").value(currentDate.toString()))
-                .andExpect(header().stringValues("Location", "http://localhost/deliveries/1")); //no api context path because it's a test
+                .andExpect(header().stringValues("Location", "http://localhost/api/deliveries/1")); //no api context path because it's a test
     }
 
     @Test
@@ -177,7 +177,7 @@ public class DeliveryControllerTests {
 
         when(DeliveryModelAssembler.toModel(delivery)).thenReturn(EntityModel.of(delivery));
 
-        this.mockMvc.perform(patch("/deliveries/1")
+        this.mockMvc.perform(patch("/api/deliveries/1")
                         .content(objectMapper.writeValueAsString(delivery))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -186,13 +186,13 @@ public class DeliveryControllerTests {
     }
     @Test
     void deleteDeliveryReturnsNoContent() throws Exception {
-        this.mockMvc.perform(delete("/deliveries/1"))
+        this.mockMvc.perform(delete("/api/deliveries/1"))
                 .andExpect(status().isNoContent());
     }
     @Test
     void deleteDeliveryIncorrectIdReturns404() throws Exception {
         doThrow(new EntityNotFoundException(Delivery.class, 233)).when(deliveryRepository).deleteById(any());
-        this.mockMvc.perform(delete("/deliveries/223"))
+        this.mockMvc.perform(delete("/api/deliveries/223"))
                 .andExpect(status().isNotFound());
     }
 
@@ -203,7 +203,7 @@ public class DeliveryControllerTests {
         when(deliveryRepository.findByParcelId(1)).thenReturn(Optional.of(delivery));
         when(DeliveryModelAssembler.toModel(delivery)).thenReturn(EntityModel.of(delivery));
 
-        this.mockMvc.perform(get("/deliveries?parcelId=1"))
+        this.mockMvc.perform(get("/api/deliveries?parcelId=1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.arrivalDate").value(currentDate.toString()));
     }

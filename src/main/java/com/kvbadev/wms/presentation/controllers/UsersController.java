@@ -28,7 +28,7 @@ import java.util.Objects;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UsersController extends BaseController {
     @Autowired
     private UserRepository userRepository;

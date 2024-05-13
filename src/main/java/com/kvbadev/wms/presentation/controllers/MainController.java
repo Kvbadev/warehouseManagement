@@ -1,12 +1,12 @@
 package com.kvbadev.wms.presentation.controllers;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-@RestController
+@Controller
 public class MainController {
-    @GetMapping(value="/")
-    public String getTestData() {
-        return "Welcome in the WMS (Warehouse Management System) Web Application!";
+    @RequestMapping(value = {"/", "/dashboard", "/dashboard/**", "/sign-in", "/about-us", "/profile"})
+    public String getIndex() {
+        return "index";
     }
 }

@@ -36,7 +36,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping("/parcels")
+@RequestMapping("/api/parcels")
 public class ParcelsController extends BaseController{
     @Autowired
     private ParcelRepository parcelRepository;

@@ -21,9 +21,11 @@
     "typescript": "^5.3.3",
     "web-vitals": "^2.1.4"
   },
+  "homepage": ".",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "postbuild": "rm -r ../static/* && cp -R build/* ../templates/ && mv ../templates/static/* ../static && rmdir ../templates/static",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

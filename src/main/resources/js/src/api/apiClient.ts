@@ -11,7 +11,8 @@ class ApiClient {
 
     constructor() {
         this.instance = axios.create({
-            baseURL: "http://localhost:8080/api",
+            // baseURL: "http://ec2-52-59-237-24.eu-central-1.compute.amazonaws.com:8080/api",
+             baseURL: "https://localhost:8080/api",
             headers: {
                 common: {
                     Authorization: "Bearer " + localStorage.getItem('token') ?? ''
