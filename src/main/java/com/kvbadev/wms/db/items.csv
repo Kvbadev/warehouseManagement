@@ -1,0 +1,31 @@
+id,name,description,quantity,net_price,parcel_id
+1,Samsung Galaxy S20,Flagship smartphone,1,459900,1
+2,Apple iPhone 12,High-end smartphone,2,499900,2
+3,Xiaomi Redmi Note 10,Value for money smartphone,3,229900,3
+4,Google Pixel 5a,Great camera performance,4,349900,4
+5,OnePlus Nord 2,Excellent performance,5,379900,5
+6,OPPO Find X3 Pro,Luxurious design,6,749900,6
+7,Realme 8 Pro,Impressive battery life,7,279900,7
+8,Vivo X60 Pro,Innovative camera features,8,419900,8
+9,Huawei P40 Pro,Sleek and stylish design,9,539900,9
+10,Motorola Moto G Power,Long-lasting battery,10,199900,10
+11,Samsung Galaxy A32,5G connectivity,11,299900,1
+12,Apple iPhone SE (2020),Compact and powerful,12,349900,2
+13,Xiaomi Mi 11 Lite,Lightweight and slim,13,259900,3
+14,Google Pixel 4a,Great camera at a lower price,14,379900,4
+15,OnePlus 9 Pro,Flagship killer,15,619900,5
+16,OPPO Reno6 Pro+,Fast charging technology,16,499900,6
+17,Realme GT Master Edition,Stylish design,17,329900,7
+18,Vivo Y20s,Long-lasting battery life,18,229900,8
+19,Huawei Nova 8 Pro,Sophisticated design,19,569900,9
+20,Motorola Moto E7 Power,Budget-friendly,20,129900,10
+21,Samsung Galaxy M52,Powerful performance,21,399900,1
+22,Apple iPhone XR,Timeless design,22,449900,2
+23,Xiaomi Redmi 9,Value for money,23,169900,3
+24,Google Pixel 3a,Excellent camera,24,299900,4
+25,OnePlus Nord CE 5G,Smooth performance,25,319900,5
+26,OPPO A74 5G,5G connectivity,26,249900,6
+27,Realme Narzo 30 Pro,High refresh rate display,27,299900,7
+28,Vivo V21e,Stylish and slim,28,379900,8
+29,Huawei Y9a,Impressive camera setup,29,369900,9
+30,Motorola Moto G Stylus,Stylus support,30,319900,10
