@@ -11,8 +11,8 @@ class ApiClient {
 
     constructor() {
         this.instance = axios.create({
-            // baseURL: "http://ec2-52-59-237-24.eu-central-1.compute.amazonaws.com:8080/api",
-             baseURL: "https://localhost:8080/api",
+            baseURL: process.env.NODE_ENV === 'development' ? "https://localhost:8080/api" :
+                "https://ec2-52-59-237-24.eu-central-1.compute.amazonaws.com:8080/api",
             headers: {
                 common: {
                     Authorization: "Bearer " + localStorage.getItem('token') ?? ''
@@ -78,7 +78,7 @@ class ApiClient {
         return data['_embedded']['userList'];
     }
     async getUser(userId: number): Promise<User> {
-        const response = await this.instance.get('/users/'+userId)
+        const response = await this.instance.get('/users/' + userId)
         const data = response.data
         return data
     }
