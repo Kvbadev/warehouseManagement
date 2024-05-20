@@ -25,7 +25,10 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "postbuild": "rm -r ../static/* && cp -R build/* ../templates/ && mv ../templates/static/* ../static && rmdir ../templates/static",
+    "postbuild": "npm run deploy-files && npm run thymeleaf-compliant-files",
+    "deploy-files": "rm -r ../static/* && cp -R build/* ../templates/ && mv ../templates/static/* ../static && rmdir ../templates/static",
+    "thymeleaf-compliant-files": "npm run add-thymeleaf-dep && sed -i '' 's|src=\"./static/js/\\(.*\\.js\\)\"|th:src=\"@{/js/\\1}\"|' ../templates/index.html && sed -i '' 's|<link href=\"./static/css/\\(.*\\).css\" rel=\"stylesheet\">|<link th:href=\"@{/css/\\1.css}\" rel=\"stylesheet\">|' ../templates/index.html",
+    "add-thymeleaf-dep": "sed -i '' 's|<html lang=\"en\">|<html lang=\"en\" xmlns:th=\"http://www.w3.org/1999/xhtml\">|' ../templates/index.html",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
