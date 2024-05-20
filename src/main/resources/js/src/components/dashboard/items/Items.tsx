@@ -44,7 +44,7 @@ export default function Items() {
     }, [sortedBy, sortState])
 
     const TableData = ({ value, style, sortable }: { value: string, style?: string, sortable?: boolean }) =>
-        <td className={`p-2 border-x-2 text-center ${style}`}>
+        <td className={`p-2 border-x-2 text-center h-8 ${style}`}>
             <span className="flex flex-row">
                 {sortable && <SortIcons property={value} sortedBy={sortedBy} setSortedBy={setSortedBy} state={sortState} setState={setSortState} />}
                 {value}
