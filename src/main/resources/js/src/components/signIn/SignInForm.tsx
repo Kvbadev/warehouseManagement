@@ -45,8 +45,8 @@ export default function SignInForm() {
                 })
             navigate('/dashboard/home');
         })
-            .catch((err: Error) => {
-                toast(err.message, {
+            .catch((err: AxiosError) => {
+                toast((err.response?.data as any).error, {
                     type: "error",
                 });
             })

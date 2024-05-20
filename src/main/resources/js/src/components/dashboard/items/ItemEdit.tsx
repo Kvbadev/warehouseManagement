@@ -51,7 +51,7 @@ export default function ItemEdit() {
             name: item.name,
             description: item.description,
             quantity: item.quantity,
-            netPrice: item.netPrice,
+            netPrice: (item.netPrice ?? 0) * 100,
         };
 
         api.patchItem(itemBody, item.id).then((_response) => {

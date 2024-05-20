@@ -18,6 +18,7 @@ import Parcels from './components/dashboard/parcels/Parcels';
 import ParcelEdit from './components/dashboard/parcels/ParcelEdit';
 import Deliveries from './components/dashboard/deliveries/Deliveries';
 import DeliveryEdit from './components/dashboard/deliveries/DeliveryEdit';
+import AboutUs from './components/aboutUs/AboutUs';
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
               </Route>
               <Route path="/sign-in" element={<SignIn />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/about-us" element={<AboutUs />} />
             </Routes>
           </BrowserRouter>
           <ToastContainer />

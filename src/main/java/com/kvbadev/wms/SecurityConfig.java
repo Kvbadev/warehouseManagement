@@ -78,8 +78,8 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.GET, "/users**").hasRole("STAFF")
                             .requestMatchers(HttpMethod.GET, "/users/*").hasRole("STAFF")
                             .requestMatchers("/items**", "/parcels**", "/deliveries**").hasRole("USER")
-                            .requestMatchers("/auth/**").permitAll()
-                            .anyRequest().authenticated()
+                            .requestMatchers("/**").permitAll()
+//                            .anyRequest().authenticated()
                 )
                 .cors(c -> {
                     CorsConfiguration configuration = new CorsConfiguration();
