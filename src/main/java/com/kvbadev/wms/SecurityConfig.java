@@ -1,8 +1,10 @@
 package com.kvbadev.wms;
 
+import com.kvbadev.wms.presentation.filters.FilterChainExceptionHandler;
 import com.kvbadev.wms.presentation.filters.JwtAuthenticationFilter;
 import com.kvbadev.wms.presentation.filters.JwtAuthorizationFilter;
 import com.kvbadev.wms.services.CustomUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +21,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
@@ -36,10 +41,13 @@ public class SecurityConfig {
     private String jwtAudience;
     @Value("${jwt.expiration}")
     private int jwtExpiration;
+    @Autowired
+    private FilterChainExceptionHandler filterChainExceptionHandler;
 
     public AuthenticationManager authenticationManager() {
         return new ProviderManager(daoAuthenticationProvider());
     }
+
     @Bean
     public RoleHierarchy roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
@@ -69,17 +77,19 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
+        http.addFilterBefore(filterChainExceptionHandler, LogoutFilter.class)
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(a -> a
-                            .requestMatchers(HttpMethod.POST, "/users**").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.PUT, "/users**").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.PATCH, "/users/*").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.DELETE, "/users/*").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.GET, "/users**").hasRole("STAFF")
-                            .requestMatchers(HttpMethod.GET, "/users/*").hasRole("STAFF")
-                            .requestMatchers("/items**", "/parcels**", "/deliveries**").hasRole("USER")
-                            .requestMatchers("/**").permitAll()
-//                            .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.POST, "/users**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/users**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/users/*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/users/*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/users**").hasRole("STAFF")
+                        .requestMatchers(HttpMethod.GET, "/users/*").hasRole("STAFF")
+                        .requestMatchers("/items**", "/parcels**", "/deliveries**").hasRole("USER")
+                                .anyRequest().permitAll()
+//                        .requestMatchers("/auth/login").anonymous()
+//                        .anyRequest().authenticated()
                 )
                 .cors(c -> {
                     CorsConfiguration configuration = new CorsConfiguration();
@@ -93,7 +103,6 @@ public class SecurityConfig {
 
                     c.configurationSource(source);
                 })
-//                .httpBasic(Customizer.withDefaults())
                 .addFilter(new JwtAuthenticationFilter(
                         authenticationManager(), jwtAudience, jwtIssuer, jwtSecret, jwtType, jwtExpiration
                 ))

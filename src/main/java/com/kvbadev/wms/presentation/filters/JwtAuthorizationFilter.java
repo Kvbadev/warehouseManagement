@@ -1,6 +1,7 @@
 package com.kvbadev.wms.presentation.filters;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
@@ -27,11 +28,13 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         this.userDetailsService = userDetailsService;
         this.jwtSecret = jwtSecret;
     }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws IOException, ServletException {
 
-        UsernamePasswordAuthenticationToken authentication = parseToken(request);
+        UsernamePasswordAuthenticationToken authentication = null;
+        authentication = parseToken(request);
 
         if (authentication != null) {
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -42,13 +45,12 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         filterChain.doFilter(request, response);
     }
 
-    private UsernamePasswordAuthenticationToken parseToken(HttpServletRequest request) {
+    private UsernamePasswordAuthenticationToken parseToken(HttpServletRequest request) throws ExpiredJwtException {
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (token != null && token.startsWith("Bearer ")) {
             token = token.replace("Bearer ", "");
 
             Claims claims = getAllClaims(token);
-
             String email = claims.getSubject();
 
             if ("".equals(email) || email == null) {
@@ -63,9 +65,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         return null;
     }
 
-    private Claims getAllClaims(String token) {
+    private Claims getAllClaims(String token) throws ExpiredJwtException {
         SecretKey secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
-
         return Jwts.parser()
                 .verifyWith(secretKey)
                 .build()
