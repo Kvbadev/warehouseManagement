@@ -61,12 +61,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         //TODO make it cleaner
         JwtDto responseToken = new JwtDto(token);
+        response.setContentType("application/json;charset=UTF-8");
         response.getOutputStream().write(objectMapper.writeValueAsBytes(responseToken));
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
-        //TODO still returns forbidden, but should return unauthorized
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, failed.getMessage());
+        throw failed;
     }
 }

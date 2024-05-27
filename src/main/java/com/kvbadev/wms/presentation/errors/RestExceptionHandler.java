@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -32,11 +34,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleEmptyRequestParam(Exception ex) {
         return buildResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
-//
-//    @ExceptionHandler(value = InsufficientAuthenticationException.class)
-//    public ResponseEntity<Object> handleInsufficientAuthentication(InsufficientAuthenticationException ex) {
-//        return buildResponseEntity(HttpStatus.UNAUTHORIZED, ex.getMessage());
-//    }
+
     @ExceptionHandler(value = {AccessDeniedException.class})
     public ResponseEntity<Object> handleAccessDenied(AccessDeniedException ex) {
         return buildResponseEntity(HttpStatus.FORBIDDEN, ex.getMessage());
@@ -63,6 +61,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ExpiredJwtException.class)
     protected ResponseEntity<Object> handleExpiredJwt(ExpiredJwtException ex) {
         return buildResponseEntity(HttpStatus.UNAUTHORIZED, "Your JWT has expired.");
+    }
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    protected ResponseEntity<Object> handleInternalAuthServiceException(InternalAuthenticationServiceException ex) {
+        return buildResponseEntity(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    }
+    @ExceptionHandler(BadCredentialsException.class)
+    protected ResponseEntity<Object> handleBadCredentials(BadCredentialsException ex) {
+        return buildResponseEntity(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {

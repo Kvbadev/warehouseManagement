@@ -5,6 +5,7 @@ import com.kvbadev.wms.presentation.filters.JwtAuthenticationFilter;
 import com.kvbadev.wms.presentation.filters.JwtAuthorizationFilter;
 import com.kvbadev.wms.services.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,11 +22,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.channel.ChannelProcessingFilter;
-import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.util.List;
 
@@ -42,7 +42,8 @@ public class SecurityConfig {
     @Value("${jwt.expiration}")
     private int jwtExpiration;
     @Autowired
-    private FilterChainExceptionHandler filterChainExceptionHandler;
+    @Qualifier("handlerExceptionResolver")
+    private HandlerExceptionResolver resolver;
 
     public AuthenticationManager authenticationManager() {
         return new ProviderManager(daoAuthenticationProvider());
@@ -77,19 +78,19 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.addFilterBefore(filterChainExceptionHandler, LogoutFilter.class)
+        http.addFilterBefore(new FilterChainExceptionHandler(resolver), LogoutFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(a -> a
-                        .requestMatchers(HttpMethod.POST, "/users**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/users**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/users/*").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/users/*").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/users**").hasRole("STAFF")
-                        .requestMatchers(HttpMethod.GET, "/users/*").hasRole("STAFF")
-                        .requestMatchers("/items**", "/parcels**", "/deliveries**").hasRole("USER")
-                                .anyRequest().permitAll()
-//                        .requestMatchers("/auth/login").anonymous()
-//                        .anyRequest().authenticated()
+                                .requestMatchers(HttpMethod.POST, "/api/users**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.PUT, "/api/users**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.PATCH, "/api/users/*").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/api/users/*").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/api/users**").hasRole("STAFF")
+                                .requestMatchers(HttpMethod.GET, "/api/users/*").hasRole("STAFF")
+                                .requestMatchers("/api/items**", "/api/parcels**", "/api/deliveries**").hasRole("USER")
+                                .requestMatchers("/api/auth/login").permitAll()
+                                .requestMatchers("/error").permitAll()
+                                .anyRequest().authenticated()
                 )
                 .cors(c -> {
                     CorsConfiguration configuration = new CorsConfiguration();
@@ -107,7 +108,13 @@ public class SecurityConfig {
                         authenticationManager(), jwtAudience, jwtIssuer, jwtSecret, jwtType, jwtExpiration
                 ))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), userDetailsService(), jwtSecret))
-                .sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exception -> {
+                    exception.accessDeniedHandler(
+                            ((request, response, accessDeniedException) ->
+                                    resolver.resolveException(request, response, null, accessDeniedException))
+                    );
+                });
 
         return http.build();
     }
